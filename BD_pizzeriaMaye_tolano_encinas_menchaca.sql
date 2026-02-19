@@ -1,102 +1,125 @@
+#LA NUEVA BASE DE DATOS
+drop database if exists mayepizzas;
+CREATE DATABASE if not exists mayepizzas;
+use mayepizzas;
 
-CREATE DATABASE IF NOT EXISTS pizzeriaMaJu;
-USE pizzeriaMaJu;
-
-CREATE TABLE Cupones (
-    id_cupon INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_cupon VARCHAR(50) NOT NULL UNIQUE,
-    porcentaje_descuento DECIMAL(4,3) NOT NULL 
+CREATE TABLE Usuarios (
+	idUsuario INT PRIMARY KEY AUTO_INCREMENT,
+	correoElectronico VARCHAR(50) not null,
+    hashContraseña VARCHAR(255) not null,
+    rol ENUM("Empleado", "Cliente")
 );
 
-CREATE TABLE Direcciones_Clientes (
-    id_direccion INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Empleados (
+	idEmpleado INT PRIMARY KEY AUTO_INCREMENT,
+	nombres VARCHAR(100) not null,
+    apellidoPaterno VARCHAR(50) NOT NULL,
+    apellidoMaterno VARCHAR(50) NULL,
+    FOREIGN KEY(idEmpleado) REFERENCES Usuarios(idUsuario)
+);
+
+CREATE TABLE DireccionesClientes (
+    idDireccion INT AUTO_INCREMENT PRIMARY KEY,
     calle VARCHAR(100),
     numero int,
     colonia VARCHAR(100)
 );
 
 CREATE TABLE Clientes (
-    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+	idCliente INT PRIMARY KEY AUTO_INCREMENT,
     nombres VARCHAR(100) NOT NULL,
-    apellido_paterno VARCHAR(50) NOT NULL,
-    apellido_materno VARCHAR(50),
-    fecha_nacimiento DATE NOT NULL,
-    id_direccion INT, 
-    FOREIGN KEY (id_direccion) REFERENCES Direcciones_Clientes(id_direccion)
+    apellidoPaterno VARCHAR(50) NOT NULL,
+    apellidoMaterno VARCHAR(50),
+    fechaNacimiento DATE NOT NULL,
+    estatus ENUM ("Activo", "Inactivo") DEFAULT "Activo",
+    idDireccion INT, 
+    FOREIGN KEY (idDireccion) REFERENCES DireccionesClientes(idDireccion),
+    FOREIGN KEY(idCliente) REFERENCES Usuarios(idUsuario)
 );
 
-CREATE TABLE Clientes_Cupones (
-    id_cliente_cupon INT AUTO_INCREMENT PRIMARY KEY,
-    id_cupon INT,
-    id_cliente INT,
-    fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_fin DATE,
-    usos_restantes INT DEFAULT 1,
-    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente),
-    FOREIGN KEY (id_cupon) REFERENCES Cupones(id_cupon)
-);
-
-CREATE TABLE Telefonos_Clientes (
-    id_telefono INT AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT NOT NULL,
+CREATE TABLE TelefonosClientes (
+    idTelefono INT AUTO_INCREMENT PRIMARY KEY,
+    idCliente INT NOT NULL,
     numero VARCHAR(15) NOT NULL,
     etiqueta VARCHAR(20),
-    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+    FOREIGN KEY (idCliente) REFERENCES Clientes(idCliente)
 );
 
 CREATE TABLE Pedidos (
-    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
-    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    total_pagar DECIMAL(10, 2) DEFAULT 0.00 NOT NULL,
+	idPedido INT AUTO_INCREMENT PRIMARY KEY,
+    fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     estado ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado') DEFAULT 'Pendiente' NOT NULL,
-    id_cliente INT NULL, 
-    id_cupon_aplicado INT NULL,
-    id_telefono INT NULL,
-    FOREIGN KEY (id_telefono) REFERENCES Telefonos_Clientes(id_telefono),
-    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente),
-    FOREIGN KEY (id_cupon_aplicado) REFERENCES Cupones(id_cupon)
-);
-
-CREATE TABLE Pedidos_Programados (
-    id_pedido_Programado INT PRIMARY KEY,
-    FOREIGN KEY (id_pedido_Programado) REFERENCES Pedidos(id_pedido)
-);
-
-CREATE TABLE Pedidos_Express (
-    id_pedido_express INT PRIMARY KEY, 
-    folio VARCHAR(20) NOT NULL UNIQUE,
-    pin_seguridad VARCHAR(255) NOT NULL,
-    FOREIGN KEY (id_pedido_express) REFERENCES Pedidos(id_pedido)
-);
-
-CREATE TABLE Historiales_Estados (
-    id_historial INT AUTO_INCREMENT PRIMARY KEY,
-    id_pedido INT NOT NULL,
-    estado_anterior ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado') NOT NULL,
-    estado_nuevo ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado')NOT NULL,
-    fecha_hora_cambio DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (id_pedido) REFERENCES Pedidos(id_pedido)
+    idCliente int NULL, #Pues en el pedido express no se vincula con ningún cliente
+    totalPagar DECIMAL (10, 2) NOT NULL,
+	FOREIGN KEY (idCliente) REFERENCES Clientes(idCliente)
 );
 
 CREATE TABLE Productos (
-    id_producto INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion VARCHAR(200) NOT NULL,
-    precio DECIMAL(10, 2) NOT NULL,
-    tamanio ENUM('Chica', 'Mediana', 'Grande') NOT NULL,
-    estado_disponible BOOLEAN DEFAULT TRUE
+	idProducto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(75) not null,
+    estado ENUM("Disponible", "No Disponible") NOT NULL DEFAULT "Disponible",
+    precio DECIMAL (10,2) not null,
+    descripcion VARCHAR(200) null,
+    tamanio ENUM("Chica", "Mediana", "Grande") not null
 );
 
-CREATE TABLE Detalles_Pedidos (
-    id_detalle INT AUTO_INCREMENT PRIMARY KEY,
-    id_pedido INT NOT NULL,
-    id_producto INT NOT NULL,
-    notas_adicionales VARCHAR(200) NULL, 
-    precio_unitario DECIMAL(10,2), 
-    FOREIGN KEY (id_pedido) REFERENCES Pedidos(id_pedido),
-    FOREIGN KEY (id_producto) REFERENCES Productos(id_producto)
+CREATE TABLE PedidoProductos (
+	idPedidoProducto INT AUTO_INCREMENT PRIMARY KEY,
+    idPedido Int not null,
+    idProducto Int not null,
+    cantidad int not null,
+    precio_unitario DECIMAL(10,2) not null,
+    subTotal DECIMAL(10,2) not null,
+    notas_adicionales VARCHAR(150) null,
+    FOREIGN KEY (idPedido) REFERENCES Pedidos(idPedido),
+    FOREIGN KEY (idProducto) REFERENCES Productos(idProducto)
 );
 
+CREATE TABLE Ingredientes (
+	idIngrediente INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) not null
+);
+
+CREATE TABLE ProductoIngredientes (
+	idProductoIngrediente INT AUTO_INCREMENT PRIMARY KEY,
+    idIngrediente int not null,
+    idProducto int not null,
+    FOREIGN KEY (idIngrediente) REFERENCES Ingredientes(idIngrediente),
+    FOREIGN KEY (idProducto) REFERENCES Productos(idProducto)
+);
+
+CREATE TABLE Cupones (
+	idCupon INT AUTO_INCREMENT PRIMARY KEY,
+    usosTotales int not null default 0,
+    usosActuales int not null,
+    nombre VARCHAR(50) not null,
+    porcentaje DECIMAL (5,2) not null,
+    fechaInicio TIMESTAMP not null default current_timestamp,
+    fechaFin TIMESTAMP NULL
+);
+
+CREATE TABLE PedidoProgramados (
+	idPedidoProgramado INT AUTO_INCREMENT PRIMARY KEY,
+    idCupon int null,
+    FOREIGN KEY (idPedidoProgramado) REFERENCES Pedidos(idPedido),
+    FOREIGN KEY (idCupon) REFERENCES Cupones(idCupon)
+);
+
+CREATE TABLE PedidoExpress (
+	idPedidoExpress INT AUTO_INCREMENT PRIMARY KEY,
+    folio int not null,
+    pinSeguridad VARCHAR(255) not null,
+    FOREIGN KEY (idPedidoExpress) REFERENCES Pedidos(idPedido)
+);
+
+CREATE TABLE HistorialEstados (
+    idHistorial INT AUTO_INCREMENT PRIMARY KEY,
+    idPedido INT NOT NULL,
+    estadoAnterior ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado') NOT NULL,
+    estadoNuevo ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado')NOT NULL,
+    fechaHoraCambio DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (idPedido) REFERENCES Pedidos(idPedido) #guardar quien hizo el cambio
+);
 
 
 
