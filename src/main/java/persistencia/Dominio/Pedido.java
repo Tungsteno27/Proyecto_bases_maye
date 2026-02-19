@@ -15,7 +15,7 @@ public class Pedido {
     private int idPedido;
     private LocalDateTime fechaCreacion;
     private EstadoPedido estado;
-    private Integer idCliente;               // solo ID, puede ser null en express
+    private Integer idCliente;               
     private double totalPagar;
     private List<PedidoProducto> productos;
 

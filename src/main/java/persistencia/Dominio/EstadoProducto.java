@@ -9,5 +9,5 @@ package persistencia.Dominio;
  * @author Tungs
  */
 public enum EstadoProducto {
-    
+    DISPONIBLE, NO_DISPONIBLE
 }
