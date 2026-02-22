@@ -19,7 +19,7 @@ public interface IClienteDAO {
      * @return
      * @throws PersistenciaException 
      */
-    public int insertarCliente(Cliente cliente) throws PersistenciaException;
+    public void insertarCliente(Cliente cliente) throws PersistenciaException;
     
     /**
      * 

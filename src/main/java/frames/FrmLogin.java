@@ -6,6 +6,14 @@ package frames;
 
 import javax.swing.*;
 import java.awt.*;
+import negocio.BOs.IUsuarioBO;
+import negocio.BOs.UsuarioBO;
+import negocio.DTOs.UsuarioDTO;
+import negocio.Exception.NegocioException;
+import persistencia.DAOs.IUsuarioDAO;
+import persistencia.DAOs.UsuarioDAO;
+import persistencia.Dominio.RolUsuario;
+import persistencia.conexion.ConexionBD;
 
 /**
  *
@@ -15,8 +23,9 @@ public class FrmLogin extends JFrame {
 
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
-    private JLabel LblTelefono;
-    private JTextField TxtTelefono;
+    //Se cambió el login de teléfono por correo electrónico
+    private JLabel LblCorreo;
+    private JTextField TxtCorreo;
     private JLabel LblContrasena;
     private JPasswordField PswContrasena;
     private JButton BtnIngresar;
@@ -48,14 +57,13 @@ public class FrmLogin extends JFrame {
         LblTitulo.setBounds(100, 40, 300, 40);
         PnlPrincipal.add(LblTitulo);
 
-        // Teléfono
-        LblTelefono = new JLabel("Teléfono *");
-        LblTelefono.setBounds(100, 120, 200, 25);
-        PnlPrincipal.add(LblTelefono);
-
-        TxtTelefono = new JTextField();
-        TxtTelefono.setBounds(100, 150, 300, 30);
-        PnlPrincipal.add(TxtTelefono);
+        //Correo
+        LblCorreo = new JLabel("Correo electrónico *");
+        LblCorreo.setBounds(100, 120, 200, 25);
+        PnlPrincipal.add(LblCorreo);
+        TxtCorreo = new JTextField();
+        TxtCorreo.setBounds(100, 150, 300, 30);
+        PnlPrincipal.add(TxtCorreo);
 
         // Contraseña
         LblContrasena = new JLabel("Contraseña *");
@@ -95,27 +103,35 @@ public class FrmLogin extends JFrame {
         });
 
         BtnIngresar.addActionListener(e -> {
-
-            String telefono = TxtTelefono.getText().trim();
+            String correo = TxtCorreo.getText().trim();
             String contrasena = new String(PswContrasena.getPassword());
 
-            if (telefono.isEmpty() || contrasena.isEmpty()) {
+            if (correo.isEmpty() || contrasena.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
                         "Debe completar todos los campos",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            //Masomenos así se le va a hacer en cada caso que se ocupe ingresar cosas e insertar o modificar la base de datos
+            try {
+                ConexionBD conexionBD = new ConexionBD();
+                IUsuarioDAO usuarioDAO = new UsuarioDAO(conexionBD);
+                IUsuarioBO usuarioBO = new UsuarioBO(usuarioDAO);
 
-            // Simulación
-            if (telefono.equals("6441234567") && contrasena.equals("1234")) {
-                new FrmMenuUsuario();
+                UsuarioDTO sesion = usuarioBO.iniciarSesion(correo, contrasena);
+
+                if (sesion.getRol() == RolUsuario.CLIENTE) {
+                    //Tal vez sea buena idea cambiar el constructor para que reciba el id del usuario, así manejamos diferentes perfiles
+                    new FrmMenuUsuario();
+                } else {
+                    //AQUÍ AGREGAR LUEGO EL MENÚ DEL EMPLEADO PLOXXXXXXXXXXXXXXXXXXXXX
+                }
                 dispose();
-
-            } else {
-
+                
+            } catch (NegocioException ex) {
                 JOptionPane.showMessageDialog(this,
-                        "Teléfono o contraseña incorrectos",
+                        ex.getMessage(),
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             }

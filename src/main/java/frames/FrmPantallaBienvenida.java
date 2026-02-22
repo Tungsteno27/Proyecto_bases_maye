@@ -20,7 +20,8 @@ public class FrmPantallaBienvenida extends JFrame {
     private JButton BtnPedidoExpress;
     private JButton BtnAccesoPersonal;
     private JButton BtnSalir;
-
+    
+    
     public FrmPantallaBienvenida() {
 
         // Configuración básica del frame

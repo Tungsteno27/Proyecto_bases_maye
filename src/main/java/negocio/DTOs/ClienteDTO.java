@@ -23,10 +23,19 @@ public class ClienteDTO {
     private String numero;
     private String colonia;
     private List<TelefonoDTO> telefonos;
+    private UsuarioDTO usuario;
 
     public ClienteDTO() {
     }
 
+    public UsuarioDTO getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioDTO usuario) {
+        this.usuario = usuario;
+    }
+    
     public int getIdCliente() {
         return idCliente;
     }

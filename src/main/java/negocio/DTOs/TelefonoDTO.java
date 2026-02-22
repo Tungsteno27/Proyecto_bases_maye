@@ -9,15 +9,24 @@ package negocio.DTOs;
  * @author julian izaguirre
  */
 public class TelefonoDTO {
-    
+    private int idCliente;
     private String numero;
     private String etiqueta;
-    // etiqueta de caza, work celular
+    // etiqueta de casa, work celular
     private int idTelefono;
 
     public TelefonoDTO() {
     }
 
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    
     public TelefonoDTO(String numero, String etiqueta) {
         this.numero = numero;
         this.etiqueta = etiqueta;

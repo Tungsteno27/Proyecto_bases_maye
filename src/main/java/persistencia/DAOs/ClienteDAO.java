@@ -25,41 +25,39 @@ public class ClienteDAO implements IClienteDAO {
         this.conexionBD = conexionBD;
     }
 
-    @Override
-    public int insertarCliente(Cliente cliente) throws PersistenciaException {
-        String comandoSQL = "INSERT INTO Clientes (nombres, apellidoPaterno, apellidoMaterno, fechaNacimiento, estatus, idDireccion) VALUES\n" +
-            "(?, ?, ?, ?, ?)";
-        //El return generated keys es para que el método regrese el id del pedido insertado
+    public void insertarCliente(Cliente cliente) throws PersistenciaException {
+        String sql = "INSERT INTO Clientes (idCliente, nombres, apellidoPaterno, apellidoMaterno, " +
+                     "fechaNacimiento, estatus, idDireccion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = conexionBD.crearConexion();
-                PreparedStatement ps = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
-            
-            ps.setString(1, cliente.getNombres());
-            ps.setString(2, cliente.getApellidoPaterno());
-            ps.setString(3, cliente.getApellidoMaterno());
-            ps.setDate(4, Date.valueOf(cliente.getFechaNacimiento()));
-            ps.setString(5, cliente.getEstatus().name());
-            ps.setInt(6, cliente.getDireccion().getIdDireccion());
-            
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, cliente.getIdCliente()); 
+            ps.setString(2, cliente.getNombres());
+            ps.setString(3, cliente.getApellidoPaterno());
+
+            if (cliente.getApellidoMaterno() == null) {
+                ps.setNull(4, Types.VARCHAR);
+            } else {
+                ps.setString(4, cliente.getApellidoMaterno());
+            }
+
+            ps.setDate(5, Date.valueOf(cliente.getFechaNacimiento()));
+            ps.setString(6, cliente.getEstatus().name());
+
+            if (cliente.getDireccion() == null) {
+                ps.setNull(7, Types.INTEGER);
+            } else {
+                ps.setInt(7, cliente.getDireccion().getIdDireccion());
+            }
+
             ps.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-            
-        } catch (SQLException ex) {
-            throw new PersistenciaException("Error al insertar cliente: " + ex.getMessage());
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al insertar cliente: " + e.getMessage());
         }
-        throw new PersistenciaException("so se pudo obtener el ID del cliente");
     }
-    
-    /**
-     * 
-     * @param cliente
-     * @return
-     * @throws PersistenciaException 
-     */
+
     @Override
     public boolean actualizarCliente(Cliente cliente) throws PersistenciaException {
         String comandoSQL = "UPDATE Clientes SET nombres = ?, apellidoPaterno = ?, apellidoMaterno = ?, fechaNacimiento = ?, estatus = ?, idDireccion = ? WHERE idCliente = ?";
