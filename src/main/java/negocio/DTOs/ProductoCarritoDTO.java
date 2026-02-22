@@ -11,11 +11,11 @@ import persistencia.Dominio.Producto;
  * @author Tungs
  */
 public class ProductoCarritoDTO {
-    private Producto producto;    
+    private ProductoDTO producto;    
     private int cantidad;        
     private String notas;
 
-    public ProductoCarritoDTO(Producto producto, int cantidad, String notas) {
+    public ProductoCarritoDTO(ProductoDTO producto, int cantidad, String notas) {
         this.producto = producto;
         this.cantidad = cantidad;
         this.notas = notas;
@@ -25,11 +25,11 @@ public class ProductoCarritoDTO {
     }
     
     
-    public Producto getProducto() {
+    public ProductoDTO getProducto() {
         return producto;
     }
 
-    public void setProducto(Producto producto) {
+    public void setProducto(ProductoDTO producto) {
         this.producto = producto;
     }
 

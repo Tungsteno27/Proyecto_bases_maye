@@ -61,7 +61,7 @@ public class ProductoDAO implements IProductoDAO {
 
     @Override
     public Producto obtenerProductoPorId(int id) throws PersistenciaException {
-        Producto producto=null;
+        Producto producto=null; // esto se debe inicializar adentro del if(rs.next())
         String comandoSQL = "SELECT idProducto, nombre, estado, precio, descripcion, tamanio FROM Productos WHERE idProducto=?";
         try(Connection conn = conexionBD.crearConexion();
                 PreparedStatement ps= conn.prepareStatement(comandoSQL)
@@ -70,6 +70,7 @@ public class ProductoDAO implements IProductoDAO {
             ps.setInt(1, id);
             try(ResultSet rs = ps.executeQuery()){
                 if(rs.next()){
+                    // producto = new Producto();
                     producto.setIdProducto(rs.getInt("idProducto"));
                     producto.setNombre(rs.getString("nombre"));
                     producto.setEstado(EstadoProducto.valueOf(rs.getString("estado").toUpperCase()));
