@@ -1,4 +1,3 @@
-#LA NUEVA BASE DE DATOS
 drop database if exists mayepizzas;
 CREATE DATABASE if not exists mayepizzas;
 use mayepizzas;
@@ -48,7 +47,7 @@ CREATE TABLE TelefonosClientes (
 CREATE TABLE Pedidos (
 	idPedido INT AUTO_INCREMENT PRIMARY KEY,
     fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    estado ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado') DEFAULT 'Pendiente' NOT NULL,
+    estado ENUM('Pendiente', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado') DEFAULT 'Pendiente' NOT NULL,
     idCliente int NULL, #Pues en el pedido express no se vincula con ningún cliente
     totalPagar DECIMAL (10, 2) NOT NULL,
 	FOREIGN KEY (idCliente) REFERENCES Clientes(idCliente)
@@ -75,18 +74,8 @@ CREATE TABLE PedidoProductos (
     FOREIGN KEY (idProducto) REFERENCES Productos(idProducto)
 );
 
-CREATE TABLE Ingredientes (
-	idIngrediente INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) not null
-);
 
-CREATE TABLE ProductoIngredientes (
-	idProductoIngrediente INT AUTO_INCREMENT PRIMARY KEY,
-    idIngrediente int not null,
-    idProducto int not null,
-    FOREIGN KEY (idIngrediente) REFERENCES Ingredientes(idIngrediente),
-    FOREIGN KEY (idProducto) REFERENCES Productos(idProducto)
-);
+
 
 CREATE TABLE Cupones (
 	idCupon INT AUTO_INCREMENT PRIMARY KEY,
@@ -115,14 +104,10 @@ CREATE TABLE PedidoExpress (
 CREATE TABLE HistorialEstados (
     idHistorial INT AUTO_INCREMENT PRIMARY KEY,
     idPedido INT NOT NULL,
-    estadoAnterior ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado') NOT NULL,
-    estadoNuevo ENUM('Pendiente', 'En Preparación', 'Listo', 'Entregado', 'Cancelado', 'No Reclamado')NOT NULL,
+    idUsuario INT NOT NULL, #ESTO ES NUEVO ES PARA SABER QUIEN HIZO EL CAMBIO, SI UN EMPLEADO O UN CLIENTE
+    estadoAnterior ENUM('Pendiente',  'Listo', 'Entregado', 'Cancelado', 'No Reclamado') NOT NULL,
+    estadoNuevo ENUM('Pendiente',  'Listo', 'Entregado', 'Cancelado', 'No Reclamado')NOT NULL,
     fechaHoraCambio DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (idPedido) REFERENCES Pedidos(idPedido) #guardar quien hizo el cambio
+    FOREIGN KEY (idPedido) REFERENCES Pedidos(idPedido), #guardar quien hizo el cambio
+    FOREIGN KEY (idUsuario) REFERENCES USUARIOS(idUsuario)
 );
-
-
-
-
-
-
