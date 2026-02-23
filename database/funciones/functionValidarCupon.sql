@@ -1,37 +1,36 @@
-
-#Funcion que valida que un cupon sea valido
 DELIMITER $$
-CREATE FUNCTION validarCupon (idCuponClienteParam INT)
+
+DROP FUNCTION IF EXISTS validarCupon$$
+
+CREATE FUNCTION validarCupon (idCuponParam INT)
 RETURNS BOOLEAN
 DETERMINISTIC
 BEGIN
-	DECLARE usosResVar INT;
-    DECLARE fechaFinVar DATE;
-    
-	#Valida que exista el cupón dado por el parametro
+    DECLARE usosRestantesVar INT;
+    DECLARE usosActualesVar INT;
+    DECLARE usosTotalesVar INT;
+    DECLARE fechaFinVar TIMESTAMP;
+
     IF NOT EXISTS(
-		SELECT 1 FROM Clientes_Cupones AS cc
-        WHERE cc.id_cliente_cupon = idCuponClienteParam
-    ) THEN RETURN FALSE;
+        SELECT 1 FROM Cupones
+        WHERE idCupon = idCuponParam
+    ) THEN 
+        RETURN FALSE;
     END IF;
-    
-    #Obtiene el número de usos que le quedan al cupón y luego valida si todavía le quedan
-    SELECT usos_restantes
-    INTO usosResVar
-    FROM Clientes_Cupones
-    where id_cliente_cupon = idCuponClienteParam;
-    
-    IF usosResVar = 0 THEN RETURN FALSE; 
+
+    SELECT usosActuales, usosTotales, fechaFin
+    INTO usosActualesVar, usosTotalesVar, fechaFinVar
+    FROM Cupones
+    WHERE idCupon = idCuponParam;
+
+    IF usosActualesVar >= usosTotalesVar THEN 
+        RETURN FALSE;
     END IF;
-    
-    #Valida que la fecha del cupón sea válida (que el cupón no esté expirado)
-    SELECT fecha_fin
-    INTO  fechaFinVar
-    FROM Clientes_Cupones
-    where id_cliente_cupon = idCuponClienteParam;
-    
-    IF current_date() > fecha_fin THEN RETURN FALSE;
+
+    IF fechaFinVar IS NOT NULL AND NOW() > fechaFinVar THEN 
+        RETURN FALSE;
     END IF;
-    
-END $$
+
+    RETURN TRUE;
+END$$
 DELIMITER ;
