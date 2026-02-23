@@ -125,7 +125,7 @@ public class FrmLogin extends JFrame {
                     //Tal vez sea buena idea cambiar el constructor para que reciba el id del usuario, así manejamos diferentes perfiles
                     new FrmMenuUsuario();
                 } else {
-                    //AQUÍ AGREGAR LUEGO EL MENÚ DEL EMPLEADO PLOXXXXXXXXXXXXXXXXXXXXX
+                    new FrmGestionProductos();
                 }
                 dispose();
                 

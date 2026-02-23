@@ -16,7 +16,6 @@ public interface IProductoDAO {
     
     public List<Producto> obtenerProductosDisponibles() throws PersistenciaException;
     public Producto obtenerProductoPorId(int id) throws PersistenciaException;
-    
-   
-    
+    public int insertarProducto(persistencia.Dominio.Producto producto) throws PersistenciaException;
+     
 }

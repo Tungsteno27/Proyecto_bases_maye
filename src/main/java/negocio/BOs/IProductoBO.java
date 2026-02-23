@@ -22,4 +22,12 @@ public interface IProductoBO {
      * Busca un producto especifico por su ID
      */
     ProductoDTO obtenerProductoPorId(int id) throws NegocioException;
+    
+    /**
+     * 
+     * @param producto
+     * @return
+     * @throws NegocioException 
+     */
+    ProductoDTO agregarProducto(ProductoDTO producto) throws NegocioException;
 }

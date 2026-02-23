@@ -85,4 +85,33 @@ public class ProductoBO implements IProductoBO{
         }
     }
     
+    @Override
+    public ProductoDTO agregarProducto(ProductoDTO productoDTO) throws NegocioException {
+        try {
+            Producto producto = new Producto();
+            producto.setNombre(productoDTO.getNombre());
+            producto.setPrecio(productoDTO.getPrecio());
+            producto.setDescripcion(productoDTO.getDescripcion());
+            
+            // Casteo de Enums manejando mayúsculas
+            if (productoDTO.getEstado() != null && !productoDTO.getEstado().isEmpty()) {
+                producto.setEstado(persistencia.Dominio.EstadoProducto.valueOf(productoDTO.getEstado().toUpperCase()));
+            } else {
+                producto.setEstado(persistencia.Dominio.EstadoProducto.DISPONIBLE);
+            }
+
+            if (productoDTO.getTamanio() != null && !productoDTO.getTamanio().isEmpty()) {
+                producto.setTamanio(persistencia.Dominio.TamanioProducto.valueOf(productoDTO.getTamanio().toUpperCase()));
+            }
+
+            // Guardamos en BD
+            int idGenerado = productoDAO.insertarProducto(producto);
+            productoDTO.setIdProducto(idGenerado);
+            
+            return productoDTO;
+            
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al registrar el producto: " + ex.getMessage());
+        }
+    }
 }

@@ -70,7 +70,7 @@ public class ProductoDAO implements IProductoDAO {
             ps.setInt(1, id);
             try(ResultSet rs = ps.executeQuery()){
                 if(rs.next()){
-                    // producto = new Producto();
+                    producto = new Producto();
                     producto.setIdProducto(rs.getInt("idProducto"));
                     producto.setNombre(rs.getString("nombre"));
                     producto.setEstado(EstadoProducto.valueOf(rs.getString("estado").toUpperCase()));
@@ -86,7 +86,30 @@ public class ProductoDAO implements IProductoDAO {
         return producto;
     }
     
-    
+    @Override
+    public int insertarProducto(Producto producto) throws PersistenciaException {
+        String sql = "INSERT INTO Productos (nombre, estado, precio, descripcion, tamanio) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = conexionBD.crearConexion();
+             PreparedStatement ps = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, producto.getNombre());
+            ps.setString(2, producto.getEstado().name()); 
+            ps.setDouble(3, producto.getPrecio());
+            ps.setString(4, producto.getDescripcion());
+            ps.setString(5, producto.getTamanio().name());
+
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al insertar el producto: " + e.getMessage());
+        }
+        throw new PersistenciaException("No se pudo obtener el ID del producto insertado");
+    }
     
     
     

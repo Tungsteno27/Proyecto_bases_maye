@@ -2,46 +2,59 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package frames;
+
 import javax.swing.*;
 import java.awt.*;
-
-
-/**
- *
- * @author Noelia E.N.
- */
+import negocio.BOs.CuponBO;
+import negocio.BOs.ICuponBO;
+import negocio.BOs.IPedidoBO;
+import negocio.BOs.PedidoBO;
+import negocio.DTOs.CuponDTO;
+import negocio.DTOs.PedidoDTO;
+import negocio.DTOs.ProductoCarritoDTO;
+import negocio.Exception.NegocioException;
+import persistencia.DAOs.CuponDAO;
+import persistencia.DAOs.PedidoDAO;
+import persistencia.conexion.ConexionBD;
 
 public class FrmProgramadoCarrito extends JFrame {
 
     private JTextArea TxtResumen;
-    private JScrollPane ScrollResumen;
-
-    private JLabel LblSubtotal;
-    private JLabel LblDescuento;
-    private JLabel LblTotal;
-
+    private JLabel LblSubtotal, LblDescuento, LblTotal;
     private JTextField TxtCupon;
-    private JButton BtnAplicarCupon;
+    private JButton BtnAplicarCupon, BtnSeguirAgregando, BtnConfirmar;
 
-    private JButton BtnSeguirAgregando;
-    private JButton BtnConfirmar;
-
-    private double subtotal = 370.0; // simulado
+    // lo nuevo
+    private PedidoDTO pedidoActual;
+    private ICuponBO cuponBO;
+    private IPedidoBO pedidoBO;
+    
+    private double subtotal = 0.0;
     private double descuento = 0.0;
-    private double total = 370.0;
+    private double total = 0.0;
 
-    public FrmProgramadoCarrito() {
+    /**
+     * constructor para el pedido dtp
+     * @param pedido 
+     */
+    public FrmProgramadoCarrito(PedidoDTO pedido) {
+        this.pedidoActual = pedido;
 
         setTitle("Carrito - Pedido Programado");
         setSize(650, 600);
         setLayout(null);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
         getContentPane().setBackground(new Color(255, 248, 220));
+        
+        ConexionBD conexion = new ConexionBD();
+        this.cuponBO = new CuponBO(new CuponDAO(conexion));
+        this.pedidoBO = new PedidoBO(new PedidoDAO(conexion));
 
         inicializarComponentes();
+        cargarCarritoReal();
         actualizarTotales();
         agregarEventos();
 
@@ -49,7 +62,6 @@ public class FrmProgramadoCarrito extends JFrame {
     }
 
     private void inicializarComponentes() {
-
         JLabel LblTitulo = new JLabel("Resumen del Pedido");
         LblTitulo.setBounds(200, 30, 300, 35);
         LblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
@@ -57,12 +69,7 @@ public class FrmProgramadoCarrito extends JFrame {
 
         TxtResumen = new JTextArea();
         TxtResumen.setEditable(false);
-        TxtResumen.setText(
-                "Pizza Pepperoni x2 - $360\n" +
-                "Refresco 2L x1 - $45\n"
-        );
-
-        ScrollResumen = new JScrollPane(TxtResumen);
+        JScrollPane ScrollResumen = new JScrollPane(TxtResumen);
         ScrollResumen.setBounds(120, 80, 400, 150);
         add(ScrollResumen);
 
@@ -106,43 +113,74 @@ public class FrmProgramadoCarrito extends JFrame {
         add(BtnConfirmar);
     }
 
+    private void cargarCarritoReal() {
+        subtotal = 0.0;
+        StringBuilder sb = new StringBuilder();
+
+        if (pedidoActual.getProductos() != null && !pedidoActual.getProductos().isEmpty()) {
+            for (ProductoCarritoDTO item : pedidoActual.getProductos()) {
+                double precioItem = item.getProducto().getPrecio() * item.getCantidad();
+                sb.append(item.getProducto().getNombre())
+                  .append(" x").append(item.getCantidad())
+                  .append(" - $").append(precioItem).append("\n");
+                
+                subtotal += precioItem;
+            }
+        } else {
+            sb.append("El carrito esta vacio ");
+            BtnConfirmar.setEnabled(false);
+        }
+        
+        TxtResumen.setText(sb.toString());
+    }
+
     private void actualizarTotales() {
         total = subtotal - descuento;
-
         LblSubtotal.setText("Subtotal: $" + subtotal);
         LblDescuento.setText("Descuento: $" + descuento);
         LblTotal.setText("Total: $" + total);
     }
 
     private void agregarEventos() {
-
         BtnAplicarCupon.addActionListener(e -> {
+            String codigoCupon = TxtCupon.getText().trim();
+            if(codigoCupon.isEmpty()) return;
 
-            String cupon = TxtCupon.getText().trim();
-
-            if (cupon.equalsIgnoreCase("PIZZA10")) {
-                descuento = subtotal * 0.10;
-                JOptionPane.showMessageDialog(this,
-                        "Cupón aplicado: 10% de descuento");
-            } else {
-                descuento = 0;
-                JOptionPane.showMessageDialog(this,
-                        "Cupón inválido",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+            try {
+                CuponDTO cuponReal = cuponBO.obtenerCuponPorNombre(codigoCupon);
+                // buscamos si el cupon existe con el cuponBO de Yulian
+                
+                if (cuponBO.validarCupon(cuponReal.getIdCupon())) {
+                    descuento = subtotal * (cuponReal.getPorcentaje() / 100);
+                    JOptionPane.showMessageDialog(this, "Cupon aplicado con exito");
+                    actualizarTotales();
+                } else {
+                    JOptionPane.showMessageDialog(this, "El cupon ha expirado o ya no tiene usos", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NegocioException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            actualizarTotales();
         });
 
         BtnSeguirAgregando.addActionListener(e -> {
-            new FrmProgramadoMenu();
+            new FrmProgramadoMenu(pedidoActual); 
             dispose();
         });
 
         BtnConfirmar.addActionListener(e -> {
-            new FrmProgramadoFinal();
-            dispose();
+            BtnConfirmar.setEnabled(false);
+            try {
+                pedidoActual.setTotalPagar(total);
+                pedidoActual.setEstado("PENDIENTE");
+                PedidoDTO pedidoGuardado = pedidoBO.registrarPedido(pedidoActual);
+                
+                new FrmProgramadoFinal(String.valueOf(pedidoGuardado.getIdPedido()));
+                dispose();
+                
+            } catch (NegocioException ex) {
+                JOptionPane.showMessageDialog(this, "Error al confirmar tu pedido: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                BtnConfirmar.setEnabled(true);
+            }
         });
     }
 }

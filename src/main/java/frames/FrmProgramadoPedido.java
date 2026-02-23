@@ -6,6 +6,9 @@ package frames;
 
 import javax.swing.*;
 import java.awt.*;
+import negocio.DTOs.PedidoDTO;
+import negocio.DTOs.ProductoCarritoDTO;
+import negocio.DTOs.ProductoDTO;
 
 /**
  *
@@ -13,33 +16,21 @@ import java.awt.*;
  */
 public class FrmProgramadoPedido extends JFrame {
 
-    private JLabel LblTitulo;
-    private JLabel LblProducto;
-    private JLabel LblTamano;
-    private JLabel LblCantidad;
-    private JLabel LblNotas;
-    private JLabel LblResumen;
-
-    private JRadioButton RbChica;
-    private JRadioButton RbMediana;
-    private JRadioButton RbGrande;
+    private JLabel LblTitulo, LblProducto, LblTamano, LblCantidad, LblNotas, LblResumen;
+    private JRadioButton RbChica, RbMediana, RbGrande;
     private ButtonGroup GrupoTamano;
-
     private JSpinner SpnCantidad;
-    private JTextArea TxtNotas;
+    private JTextArea TxtNotas, TxtResumen;
+    private JButton BtnAgregar, BtnRegresar, BtnVerCarrito;
 
-    private JTextArea TxtResumen;
+    // cambiamos el String de la noelia por los DTOs reales
+    private ProductoDTO productoSeleccionado;
+    private PedidoDTO pedidoActual;
 
-    private JButton BtnAgregar;
-    private JButton BtnRegresar;
-    private JButton BtnVerCarrito;
-
-    private String productoSeleccionado;
-    private double precioBase = 180; // ejemplo
-
-    public FrmProgramadoPedido(String producto) {
+    public FrmProgramadoPedido(ProductoDTO producto, PedidoDTO pedido) {
 
         this.productoSeleccionado = producto;
+        this.pedidoActual = pedido;
 
         setTitle("Personalizar Pedido Programado");
         setSize(600, 650);
@@ -57,13 +48,12 @@ public class FrmProgramadoPedido extends JFrame {
     }
 
     private void inicializarComponentes() {
-
         LblTitulo = new JLabel("PERSONALIZAR PEDIDO");
         LblTitulo.setBounds(150, 20, 400, 30);
         LblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         add(LblTitulo);
 
-        LblProducto = new JLabel("Producto: " + productoSeleccionado);
+        LblProducto = new JLabel("Producto: " + productoSeleccionado.getNombre());
         LblProducto.setBounds(50, 70, 400, 25);
         add(LblProducto);
 
@@ -125,7 +115,7 @@ public class FrmProgramadoPedido extends JFrame {
         BtnAgregar.setForeground(Color.WHITE);
         add(BtnAgregar);
 
-        BtnRegresar = new JButton("Regresar");
+        BtnRegresar = new JButton("Regresar al Menú");
         BtnRegresar.setBounds(330, 550, 200, 40);
         BtnRegresar.setBackground(new Color(200, 0, 0));
         BtnRegresar.setForeground(Color.WHITE);
@@ -147,19 +137,32 @@ public class FrmProgramadoPedido extends JFrame {
         SpnCantidad.addChangeListener(e -> actualizarResumen());
 
         BtnAgregar.addActionListener(e -> {
+            
+            // Creamos el renglón del carrito y lo metemos a la mochila
+            ProductoCarritoDTO item = new ProductoCarritoDTO();
+            item.setProducto(productoSeleccionado);
+            item.setCantidad((int) SpnCantidad.getValue());
+            
+            String tamañoElegido = RbGrande.isSelected() ? "Grande" : (RbMediana.isSelected() ? "Mediana" : "Chica");
+            String notaFinal = "Tamaño: " + tamañoElegido + ". " + TxtNotas.getText().trim();
+            item.setNotas(notaFinal);
+            
+            pedidoActual.getProductos().add(item);
+
             JOptionPane.showMessageDialog(this,
                     "Producto agregado al carrito",
                     "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
+            TxtNotas.setText(""); // Limpiamos las notas por si quiere otro
         });
 
         BtnRegresar.addActionListener(e -> {
-            new FrmProgramadoMenu();
+            new FrmProgramadoMenu(pedidoActual); 
             dispose();
         });
 
         BtnVerCarrito.addActionListener(e -> {
-            new FrmProgramadoCarrito();
+            new FrmProgramadoCarrito(pedidoActual); 
             dispose();
         });
 
@@ -179,13 +182,14 @@ public class FrmProgramadoPedido extends JFrame {
             tamano = "Grande";
         }
 
-        double total = (precioBase + extra) * cantidad;
+        // Sacamos el precio base desde la base de datos (del DTO)
+        double totalItem = (productoSeleccionado.getPrecio() + extra) * cantidad;
 
         TxtResumen.setText(
-                "Producto: " + productoSeleccionado
+                "Producto: " + productoSeleccionado.getNombre()
                 + "\nTamaño: " + tamano
                 + "\nCantidad: " + cantidad
-                + "\nTotal: $" + total
+                + "\nTotal: $" + totalItem
         );
     }
 }
