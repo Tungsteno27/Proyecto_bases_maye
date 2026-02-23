@@ -1,5 +1,5 @@
 DELIMITER $$
-#Checar mañana en la mañana y crear los datos de prueba
+#Aquí faltaría insertar manualmente quien hizo el cambio de estado
 DROP TRIGGER IF EXISTS registrarCambioEstados$$
 
 CREATE TRIGGER registrarCambioEstados
@@ -7,14 +7,14 @@ AFTER UPDATE ON Pedidos
 FOR EACH ROW
 BEGIN
     IF OLD.estado != NEW.estado THEN
-        INSERT INTO Historiales_Estados (
-            id_pedido,
-            estado_anterior,
-            estado_nuevo,
-            fecha_hora_cambio
+        INSERT INTO HistorialEstados (
+            idPedido,
+            estadoAnterior,
+            estadoNuevo,
+            fechaHoraCambio
         )
         VALUES (
-            NEW.id_pedido,
+            NEW.idPedido,
             OLD.estado,
             NEW.estado,
             NOW()
