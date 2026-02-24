@@ -16,6 +16,13 @@ import persistencia.Dominio.RolUsuario;
 import persistencia.conexion.ConexionBD;
 
 /**
+ * Representa la ventana de inicio de sesión del sistema.
+ * <p>
+ * Esta clase permite al usuario ingresar su teléfono y contraseña para acceder
+ * al sistema. También proporciona la opción de regresar a la pantalla de
+ * bienvenida.
+ * </p>
+ * Pertenece a la capa de presentación.
  *
  * @author Noelia E.N.
  */
@@ -31,6 +38,10 @@ public class FrmLogin extends JFrame {
     private JButton BtnIngresar;
     private JButton BtnRegresar;
 
+    /**
+     * Constructor de la clase FrmLogin. Inicializa la ventana, sus componentes,
+     * estilos y eventos asociados.
+     */
     public FrmLogin() {
 
         setTitle("Login - Maye´s Pizzas");
@@ -45,6 +56,10 @@ public class FrmLogin extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Inicializa y posiciona todos los componentes gráficos dentro del panel
+     * principal.
+     */
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
@@ -84,6 +99,9 @@ public class FrmLogin extends JFrame {
         PnlPrincipal.add(BtnRegresar);
     }
 
+    /**
+     * Aplica estilos visuales personalizados a los componentes de la ventana.
+     */
     private void aplicarEstilos() {
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
@@ -95,6 +113,9 @@ public class FrmLogin extends JFrame {
         BtnRegresar.setForeground(Color.WHITE);
     }
 
+    /**
+     * Asocia los eventos de acción a los botones de la interfaz.
+     */
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
