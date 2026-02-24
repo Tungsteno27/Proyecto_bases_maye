@@ -8,7 +8,16 @@ import javax.swing.*;
 import java.awt.*;
 import negocio.DTOs.UsuarioDTO;
 
+
 /**
+ * Representa el menú principal del usuario dentro del sistema.
+ * <p>
+ * Esta ventana se muestra después de que el usuario inicia sesión
+ * correctamente. Desde aquí se puede navegar a las distintas funcionalidades
+ * del sistema, como crear un pedido programado, consultar pedidos, gestionar
+ * perfil y administrar teléfonos registrados.
+ * </p>
+ * Pertenece a la capa de presentación.
  *
  * @author Noelia E.N.
  */
@@ -25,6 +34,10 @@ public class FrmMenuUsuario extends JFrame {
 
     private UsuarioDTO sesionActual;
 
+    /**
+     * Constructor de la clase FrmMenuUsuario. Inicializa la ventana, sus
+     * componentes, estilos y eventos asociados.
+     */
     public FrmMenuUsuario(UsuarioDTO sesionActual) {
         this.sesionActual = sesionActual;
 
@@ -40,6 +53,10 @@ public class FrmMenuUsuario extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Inicializa y posiciona todos los componentes gráficos dentro del panel
+     * principal.
+     */
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
@@ -72,6 +89,9 @@ public class FrmMenuUsuario extends JFrame {
         PnlPrincipal.add(BtnCerrarSesion);
     }
 
+    /**
+     * Aplica estilos visuales personalizados a los componentes de la ventana.
+     */
     private void aplicarEstilos() {
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
@@ -92,6 +112,9 @@ public class FrmMenuUsuario extends JFrame {
         BtnCerrarSesion.setForeground(Color.WHITE);
     }
 
+     /**
+     * Asocia los eventos de acción a los botones de navegación del menú.
+     */
     private void agregarEventos() {
 
         BtnCerrarSesion.addActionListener(e -> {
@@ -105,7 +128,7 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnMisPedidos.addActionListener(e -> {
-            // new FrmMisPedidos(); cambie esto ahorita se corrige
+            new FrmMisPedidos(); 
             dispose();
         });
 
@@ -115,7 +138,7 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnMisTelefonos.addActionListener(e -> {
-            // new FrmMisTelefonos(); cambie esto ahorita se corrige
+            new FrmMisTelefonos(); 
             dispose();
         });
     }
