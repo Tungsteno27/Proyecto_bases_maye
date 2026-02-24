@@ -54,8 +54,8 @@ public class FrmRegistro extends JFrame {
 
     private JButton BtnGuardar;
     private JButton BtnRegresar;
-    private JLabel LblNombres; 
-    private JLabel LblApellidoPaterno; 
+    private JLabel LblNombres;
+    private JLabel LblApellidoPaterno;
     private JLabel LblApellidoMaterno;
     private JTextField TxtNombres;
     private JTextField TxtApellidoPaterno;
@@ -66,14 +66,13 @@ public class FrmRegistro extends JFrame {
     private JTextField TxtCalle;
     private JTextField TxtNumero;
     private JTextField TxtColonia;
-    
+
     private JLabel LblCorreo;
     private JTextField TxtCorreo;
-    
 
     public FrmRegistro() {
         setTitle("Registro - Maye´s Pizzas");
-        setSize(550, 770);
+        setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -82,20 +81,27 @@ public class FrmRegistro extends JFrame {
         agregarEventos();
 
         setVisible(true);
-        
+
     }
 
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
         PnlPrincipal.setLayout(null);
-        add(PnlPrincipal);
+        PnlPrincipal.setPreferredSize(new Dimension(580, 750));
+        PnlPrincipal.setBackground(new Color(255, 248, 220));
+
+        // Scroll
+        JScrollPane scroll = new JScrollPane(PnlPrincipal);
+        scroll.setBounds(0, 0, 600, 600);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        add(scroll);
 
         LblTitulo = new JLabel("REGISTRO DE USUARIO");
         LblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         LblTitulo.setBounds(100, 30, 350, 40);
         PnlPrincipal.add(LblTitulo);
-        
+
         // Correo electrónico - PRIMERO
         LblCorreo = new JLabel("Correo electrónico *");
         LblCorreo.setBounds(100, 80, 300, 25);
@@ -190,7 +196,7 @@ public class FrmRegistro extends JFrame {
         BtnRegresar = new JButton("Regresar");
         BtnRegresar.setBounds(300, 675, 140, 35);
         PnlPrincipal.add(BtnRegresar);
-      
+
     }
 
     private void aplicarEstilos() {
@@ -215,14 +221,14 @@ public class FrmRegistro extends JFrame {
 
             String nombres = TxtNombres.getText().trim();
             String apellidoPaterno = TxtApellidoPaterno.getText().trim();
-            String apellidoMaterno = TxtApellidoMaterno.getText().trim(); 
+            String apellidoMaterno = TxtApellidoMaterno.getText().trim();
             String fechaNacimiento = TxtFechaNacimiento.getText().trim();
-            String calle = TxtCalle.getText().trim();         
-            String numero = TxtNumero.getText().trim();       
-            String colonia = TxtColonia.getText().trim();     
+            String calle = TxtCalle.getText().trim();
+            String numero = TxtNumero.getText().trim();
+            String colonia = TxtColonia.getText().trim();
             String telefono = TxtTelefono.getText().trim();
             String contrasena = new String(PswContrasena.getPassword());
-            String confirmar= new String (PswConfirmarContrasena.getPassword());
+            String confirmar = new String(PswConfirmarContrasena.getPassword());
             String correo = TxtCorreo.getText().trim();
             //Checa los campos obligatorios (que no estén en blanco)
             if (nombres.isEmpty() || apellidoPaterno.isEmpty() || fechaNacimiento.isEmpty()
@@ -252,7 +258,7 @@ public class FrmRegistro extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             //Aquí comienza el proceso de inserción en la BD
             UsuarioDTO usuarioDTO = new UsuarioDTO();
             usuarioDTO.setCorreoElectronico(correo);
