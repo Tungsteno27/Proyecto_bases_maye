@@ -56,8 +56,9 @@ public class FrmAccesoPersonal extends JFrame {
         LblTitulo.setForeground(Color.WHITE);
         add(LblTitulo);
 
-        LblUsuario = new JLabel("Usuario:");
-        LblUsuario.setBounds(60, 130, 100, 25);
+        // Se asume que el usuario entra con su correo
+        LblUsuario = new JLabel("Correo electrónico:");
+        LblUsuario.setBounds(60, 130, 150, 25);
         LblUsuario.setForeground(Color.WHITE);
         add(LblUsuario);
 
@@ -76,7 +77,7 @@ public class FrmAccesoPersonal extends JFrame {
 
         BtnIngresar = new JButton("Ingresar");
         BtnIngresar.setBounds(60, 320, 270, 40);
-        BtnIngresar.setBackground(new Color(255, 167, 38));
+        BtnIngresar.setBackground(new Color(255, 167, 38)); // naranja pizza
         BtnIngresar.setFocusPainted(false);
         add(BtnIngresar);
 
@@ -86,18 +87,51 @@ public class FrmAccesoPersonal extends JFrame {
         BtnVolver.setFocusPainted(false);
         add(BtnVolver);
 
-        // Eventos
+        agregarEventos();
+
+        setVisible(true);
+    }
+    
+    /**
+     * 
+     */
+    private void agregarEventos() {
         BtnIngresar.addActionListener(e -> {
-            new FrmPanelPersonal();
-            dispose();
+            String correo = TxtUsuario.getText().trim();
+            String contrasena = new String(PswContrasena.getPassword());
+
+            if (correo.isEmpty() || contrasena.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe completar todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                // connection con la BD
+                ConexionBD conexionBD = new ConexionBD();
+                IUsuarioDAO usuarioDAO = new UsuarioDAO(conexionBD);
+                IUsuarioBO usuarioBO = new UsuarioBO(usuarioDAO);
+
+                UsuarioDTO sesion = usuarioBO.iniciarSesion(correo, contrasena);
+                // validar que noid sea un cliente normal
+                if (sesion.getRol() == RolUsuario.CLIENTE) {
+                    JOptionPane.showMessageDialog(this, "Acceso denegado, esta area es exclusiva para personal autorizado como tolano", "Acceso Restringido", JOptionPane.WARNING_MESSAGE);
+                    return; 
+                }
+
+                // abrimos el CRUD
+                JOptionPane.showMessageDialog(this, "welcome w " + sesion.getRol().name());
+                new FrmPanelPersonal(sesion); 
+                dispose();
+
+            } catch (NegocioException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         BtnVolver.addActionListener(e -> {
             new FrmPantallaBienvenida();
             dispose();
         });
-
-        setVisible(true);
     }
 }
 
