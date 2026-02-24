@@ -14,25 +14,29 @@ import java.util.logging.Logger;
 import persistencia.Dominio.Pedido;
 import persistencia.Exception.PersistenciaException;
 import persistencia.conexion.IConexionBD;
+import java.util.ArrayList;
+import java.util.List;
+import persistencia.Dominio.EstadoPedido;
 
 /**
  *
  * @author Tungs
  */
-public class PedidoDAO implements IPedidoDAO{
-    
+public class PedidoDAO implements IPedidoDAO {
+
     private final IConexionBD conexionBD;
-    
+
     private static final Logger LOG = Logger.getLogger(ProductoDAO.class.getName());
-    
+
     public PedidoDAO(IConexionBD conexionBD) {
         this.conexionBD = conexionBD;
     }
+
     public int insertarPedido(Pedido pedido) throws PersistenciaException {
         String comandoSQL = "INSERT INTO Pedidos (estado, idCliente, totalPagar) VALUES (?, ?, ?)";
 
-        try (Connection conn = conexionBD.crearConexion();                      //El return generated keys es para que el método regrese el id del pedido insertado
-             PreparedStatement ps = conn.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conexion = conexionBD.crearConexion(); //El return generated keys es para que el método regrese el id del pedido insertado
+                 PreparedStatement ps = conexion.prepareStatement(comandoSQL, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, pedido.getEstado().toString());
             //Esta validación es por si el pedido es express, es decir, no tiene un idCliente asociado, de ahí el setNull
@@ -46,8 +50,8 @@ public class PedidoDAO implements IPedidoDAO{
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    //Se retorna el id para luego poder crear el pedido programado o express, dependiendo del caso
-                    return rs.getInt(1); 
+                    //Se regresa el id para luego poder crear el pedido programado o express
+                    return rs.getInt(1);
                 }
             }
         } catch (SQLException e) {
@@ -55,7 +59,50 @@ public class PedidoDAO implements IPedidoDAO{
         }
         throw new PersistenciaException("No se pudo obtener el ID del pedido a insertar");
     }
-    
-    
+
+    @Override
+    public List<Pedido> consultarPedidosProgramadosPorCliente(Integer idCliente)
+            throws PersistenciaException {
+
+        List<Pedido> pedidos = new ArrayList<>();
+
+        String sql = """
+                    SELECT p.idPedido, p.fechaCreacion, p.estado, p.idCliente, p.totalPagar
+                    FROM Pedidos p
+                    INNER JOIN PedidoProgramados pp
+                    ON p.idPedido = pp.idPedidoProgramado
+                    WHERE p.idCliente = ?
+                    """;
+
+        try (Connection conexion = conexionBD.crearConexion(); PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, idCliente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+
+                    Pedido pedido = new Pedido();
+
+                    pedido.setIdPedido(rs.getInt("idPedido"));
+                    pedido.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
+                    pedido.setEstado(
+                            EstadoPedido.valueOf(
+                                    rs.getString("estado").toUpperCase()
+                                    //pq en el enum viene en mayuscula pero en la base viene en minuscula
+                            )
+                    );
+                    pedido.setIdCliente(rs.getInt("idCliente"));
+                    pedido.setTotalPagar(rs.getDouble("totalPagar"));
+
+                    pedidos.add(pedido);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al consultar pedidos programados: " + e.getMessage());
+        }
+
+        return pedidos;
+    }
 
 }
