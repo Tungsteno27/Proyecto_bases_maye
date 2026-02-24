@@ -182,6 +182,73 @@ public class ClienteBO implements IClienteBO{
         }
     }
     
+    /**
+     * 
+     * @return
+     * @throws NegocioException 
+     */
+    @Override
+    public List<ClienteDTO> obtenerTodosLosClientes() throws NegocioException {
+        try {
+            List<Cliente> listaDominio = clienteDAO.obtenerTodosLosClientes();
+            List<ClienteDTO> listaDTO = new ArrayList<>();
+            
+            for (Cliente c : listaDominio) {
+                ClienteDTO dto = new ClienteDTO();
+                dto.setIdCliente(c.getIdCliente());
+                dto.setNombres(c.getNombres());
+                dto.setApellidoPaterno(c.getApellidoPaterno());
+                dto.setApellidoMaterno(c.getApellidoMaterno());
+                
+                if (c.getEstatus() != null) {
+                    dto.setEstatus(c.getEstatus().name());
+                }
+                
+                if (c.getTelefonos() != null && !c.getTelefonos().isEmpty()) {
+                    List<TelefonoDTO> telefonosDTO = new ArrayList<>();
+                    TelefonoDTO telDTO = new TelefonoDTO();
+                    telDTO.setNumero(c.getTelefonos().get(0).getNumero());
+                    telefonosDTO.add(telDTO);
+                    dto.setTelefonos(telefonosDTO);
+                }
+                
+                listaDTO.add(dto);
+            }
+            return listaDTO;
+            
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al consultar la lista de clientes: " + ex.getMessage());
+        }
+    }
+    
+    /**
+     * 
+     * @param idCliente
+     * @throws NegocioException 
+     */
+    @Override
+    public void darDeBajaCliente(int idCliente) throws NegocioException {
+        try {
+            clienteDAO.darDeBajaCliente(idCliente);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al dar de baja al cliente en el sistema: " + ex.getMessage());
+        }
+    }
+    
+    /**
+     * 
+     * @param idCliente
+     * @param estatus
+     * @throws NegocioException 
+     */
+    @Override
+    public void cambiarEstatus(int idCliente, String estatus) throws NegocioException {
+        try {
+            clienteDAO.cambiarEstatus(idCliente, persistencia.Dominio.EstatusCliente.valueOf(estatus.toUpperCase()));
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al actualizar el estatus: " + ex.getMessage());
+        }
+    }
 }
 
 
