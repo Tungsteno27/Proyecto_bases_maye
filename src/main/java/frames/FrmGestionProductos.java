@@ -108,7 +108,7 @@ public class FrmGestionProductos extends JFrame {
         LblEstado = new JLabel("Estado");
         LblEstado.setBounds(30, 340, 200, 25);
         PnlPrincipal.add(LblEstado);
-        CmbEstado = new JComboBox<>(new String[]{"DISPONIBLE", "AGOTADO"});
+        CmbEstado = new JComboBox<>(new String[]{"DISPONIBLE", "NO_DISPONIBLE"});
         CmbEstado.setBounds(30, 365, 200, 30);
         PnlPrincipal.add(CmbEstado);
 
