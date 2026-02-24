@@ -3,14 +3,27 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package frames;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+
+import negocio.DTOs.UsuarioDTO;
+import negocio.DTOs.TelefonoDTO;
+import negocio.BOs.ITelefonoBO;
+import negocio.BOs.TelefonoBO;
+import negocio.Exception.NegocioException;
+
+import persistencia.DAOs.ITelefonoDAO;
+import persistencia.DAOs.TelefonoDAO;
+import persistencia.conexion.IConexionBD;
+
+import persistencia.conexion.ConexionBD;
 
 /**
  *
  * @author Noelia E.N.
  */
-
 public class FrmMisTelefonos extends JFrame {
 
     private JPanel PnlPrincipal;
@@ -30,7 +43,13 @@ public class FrmMisTelefonos extends JFrame {
     private JButton BtnGuardar;
     private JButton BtnRegresar;
 
-    public FrmMisTelefonos() {
+    private UsuarioDTO sesionActual;
+    private ITelefonoBO telefonoBO;
+
+    public FrmMisTelefonos(UsuarioDTO sesion) {
+        this.sesionActual = sesion;
+
+        inicializarBOs();
 
         setTitle("Mis teléfonos - Maye´s Pizzas");
         setSize(600, 600);
@@ -43,7 +62,13 @@ public class FrmMisTelefonos extends JFrame {
 
         setVisible(true);
 
-        cargarTelefonosFake();
+        cargarTelefonos();
+    }
+
+    private void inicializarBOs() {
+        IConexionBD conexion = new ConexionBD();
+        ITelefonoDAO telefonoDAO = new TelefonoDAO(conexion);
+        telefonoBO = new TelefonoBO(telefonoDAO);
     }
 
     private void inicializarComponentes() {
@@ -57,7 +82,6 @@ public class FrmMisTelefonos extends JFrame {
         LblTitulo.setBounds(150, 30, 300, 40);
         PnlPrincipal.add(LblTitulo);
 
-        // Nuevo teléfono
         LblNuevoTelefono = new JLabel("Nuevo teléfono *");
         LblNuevoTelefono.setBounds(100, 100, 200, 25);
         PnlPrincipal.add(LblNuevoTelefono);
@@ -66,7 +90,6 @@ public class FrmMisTelefonos extends JFrame {
         TxtNuevoTelefono.setBounds(100, 130, 200, 30);
         PnlPrincipal.add(TxtNuevoTelefono);
 
-        // Etiqueta
         LblEtiqueta = new JLabel("Etiqueta (Casa, Trabajo...)");
         LblEtiqueta.setBounds(320, 100, 200, 25);
         PnlPrincipal.add(LblEtiqueta);
@@ -75,12 +98,10 @@ public class FrmMisTelefonos extends JFrame {
         TxtEtiqueta.setBounds(320, 130, 180, 30);
         PnlPrincipal.add(TxtEtiqueta);
 
-        // Botón agregar
         BtnAgregar = new JButton("Agregar");
         BtnAgregar.setBounds(220, 180, 140, 35);
         PnlPrincipal.add(BtnAgregar);
 
-        // Área teléfonos
         TxtAreaTelefonos = new JTextArea();
         TxtAreaTelefonos.setEditable(false);
 
@@ -88,7 +109,6 @@ public class FrmMisTelefonos extends JFrame {
         ScrollTelefonos.setBounds(100, 240, 400, 200);
         PnlPrincipal.add(ScrollTelefonos);
 
-        // Guardar y regresar
         BtnGuardar = new JButton("Guardar");
         BtnGuardar.setBounds(150, 480, 140, 35);
         PnlPrincipal.add(BtnGuardar);
@@ -115,44 +135,74 @@ public class FrmMisTelefonos extends JFrame {
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
-            new FrmMenuUsuario();
+            new FrmMenuUsuario(sesionActual);
             dispose();
         });
 
         BtnAgregar.addActionListener(e -> {
 
-            String telefono = TxtNuevoTelefono.getText().trim();
-            String etiqueta = TxtEtiqueta.getText().trim();
+            try {
+                TelefonoDTO dto = new TelefonoDTO();
+                dto.setIdCliente(sesionActual.getIdUsuario());
+                dto.setNumero(TxtNuevoTelefono.getText().trim());
+                dto.setEtiqueta(TxtEtiqueta.getText().trim());
 
-            if (telefono.isEmpty()) {
+                telefonoBO.agregarTelefono(dto);
+
                 JOptionPane.showMessageDialog(this,
-                        "Debe ingresar un número de teléfono",
+                        "Teléfono agregado correctamente",
+                        "Éxito",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                TxtNuevoTelefono.setText("");
+                TxtEtiqueta.setText("");
+
+                cargarTelefonos();
+
+            } catch (NegocioException ex) {
+                JOptionPane.showMessageDialog(this,
+                        ex.getMessage(),
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
-                return;
             }
-
-            if (etiqueta.isEmpty()) {
-                etiqueta = "Sin etiqueta";
-            }
-
-            TxtAreaTelefonos.append("Tel: " + telefono + " - " + etiqueta + "\n");
-
-            TxtNuevoTelefono.setText("");
-            TxtEtiqueta.setText("");
         });
 
         BtnGuardar.addActionListener(e -> {
             JOptionPane.showMessageDialog(this,
-                    "Teléfonos guardados correctamente",
+                    "Cambios guardados",
                     "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
         });
     }
 
-    private void cargarTelefonosFake() {
+    private void cargarTelefonos() {
 
-        TxtAreaTelefonos.append("Tel: 6441223344 - Casa\n");
-        TxtAreaTelefonos.append("Tel: 6444556677 - Trabajo\n");
+        try {
+            TxtAreaTelefonos.setText("");
+
+            List<TelefonoDTO> lista
+                    = telefonoBO.obtenerTelefonosPorIdCliente(
+                            sesionActual.getIdUsuario()
+                    );
+
+            if (lista.isEmpty()) {
+                TxtAreaTelefonos.append("No tienes teléfonos registrados.\n");
+                return;
+            }
+
+            for (TelefonoDTO t : lista) {
+                TxtAreaTelefonos.append(
+                        "Tel: " + t.getNumero()
+                        + " - " + t.getEtiqueta()
+                        + "\n-----------------------\n"
+                );
+            }
+
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
