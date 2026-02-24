@@ -8,6 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * Representa la pantalla principal del sistema Maye's Pizzas.
+ * <p>
+ * Esta ventana funciona como punto de entrada a la aplicación, permitiendo al
+ * usuario navegar hacia las distintas opciones: iniciar sesión, registrarse,
+ * realizar un pedido express, acceder como personal o salir del sistema.
+ * </p>
+ * Forma parte de la capa de presentación y está desarrollada utilizando Java
+ * Swing sin diseñador visual.
  *
  * @author Noelia E.N.
  */
@@ -21,7 +29,10 @@ public class FrmPantallaBienvenida extends JFrame {
     private JButton BtnAccesoPersonal;
     private JButton BtnSalir;
     
-    
+    /**
+     * Constructor de la clase FrmPantallaBienvenida. Configura la ventana
+     * principal e inicializa sus componentes, estilos y eventos.
+     */
     public FrmPantallaBienvenida() {
 
         // Configuración básica del frame
@@ -37,6 +48,11 @@ public class FrmPantallaBienvenida extends JFrame {
         setVisible(true);
     }
 
+    
+    /**
+     * Inicializa y posiciona los componentes gráficos dentro del panel
+     * principal.
+     */
     private void inicializarComponentes() {
 
         // Panel principal
@@ -73,7 +89,8 @@ public class FrmPantallaBienvenida extends JFrame {
     }
 
     /**
-     * Método para ponerle color a los componentes
+     * Aplica estilos visuales personalizados a los botones y al panel
+     * principal.
      */
     private void aplicarEstilos() {
 
@@ -98,6 +115,10 @@ public class FrmPantallaBienvenida extends JFrame {
         BtnSalir.setForeground(Color.WHITE);
     }
 
+    /**
+     * Define los eventos asociados a cada botón, permitiendo la navegación
+     * entre ventanas.
+     */
     private void agregarEventos() {
 
         BtnSalir.addActionListener(e -> System.exit(0));
@@ -124,6 +145,9 @@ public class FrmPantallaBienvenida extends JFrame {
         
     }
 
+    /**
+     * Método principal que ejecuta la aplicación.
+     */
     public static void main(String[] args) {
         new FrmPantallaBienvenida();
     }
