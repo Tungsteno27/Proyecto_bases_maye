@@ -21,9 +21,14 @@ import persistencia.conexion.IConexionBD;
 import persistencia.conexion.ConexionBD;
 
 /**
- * Ventana que muestra los pedidos programados del cliente logueado.
+ * Representa la ventana de consulta de pedidos del usuario dentro del sistema.
+ * <p>
+ * Esta clase permite visualizar los pedidos realizados por el usuario,
+ * aplicando un filtro según el tipo de pedido (Programados o Express).
+ * </p>
+ * Forma parte de la capa de presentación.
  *
- * @author Noelia
+ * @author Noelia E.N
  */
 public class FrmMisPedidos extends JFrame {
 
@@ -37,6 +42,10 @@ public class FrmMisPedidos extends JFrame {
     private UsuarioDTO sesionActual;
     private IPedidoBO pedidoBO;
 
+    /**
+     * Constructor de la clase FrmMisPedidos. Configura la ventana principal e
+     * inicializa sus componentes, estilos y eventos.
+     */
     public FrmMisPedidos(UsuarioDTO sesion) {
         this.sesionActual = sesion;
 
@@ -54,12 +63,21 @@ public class FrmMisPedidos extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Inicializa la conexion.
+     */
     private void inicializarBOs() {
         IConexionBD conexion = new ConexionBD();
         IPedidoDAO pedidoDAO = new PedidoDAO(conexion);
         pedidoBO = new PedidoBO(pedidoDAO);
     }
 
+    /**
+     * Inicializa y posiciona todos los componentes gráficos dentro del panel
+     * principal.
+     *
+     * Incluye el área de texto para mostrar pedidos y los botones de acción.
+     */
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
@@ -87,6 +105,9 @@ public class FrmMisPedidos extends JFrame {
         PnlPrincipal.add(BtnRegresar);
     }
 
+     /**
+     * Aplica estilos visuales personalizados a los botones y panel principal.
+     */
     private void aplicarEstilos() {
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
@@ -98,6 +119,12 @@ public class FrmMisPedidos extends JFrame {
         BtnRegresar.setForeground(Color.WHITE);
     }
 
+    /**
+     * Define los eventos asociados a los botones de la ventana.
+     *
+     * Permite filtrar los pedidos mostrados según el tipo seleccionado y
+     * regresar al menú principal.
+     */
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
