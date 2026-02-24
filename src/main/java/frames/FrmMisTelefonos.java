@@ -21,6 +21,13 @@ import persistencia.conexion.IConexionBD;
 import persistencia.conexion.ConexionBD;
 
 /**
+ * Representa la ventana de gestión de teléfonos del usuario dentro del sistema.
+ * <p>
+ * Esta clase permite al usuario agregar nuevos números telefónicos, asignarles
+ * una etiqueta descriptiva (Casa, Trabajo, etc.) y visualizar la lista actual
+ * de teléfonos registrados.
+ * </p>
+ * Forma parte de la capa de presentación.
  *
  * @author Noelia E.N.
  */
@@ -46,6 +53,10 @@ public class FrmMisTelefonos extends JFrame {
     private UsuarioDTO sesionActual;
     private ITelefonoBO telefonoBO;
 
+    /**
+     * Constructor de la clase FrmMisTelefonos. Configura la ventana principal e
+     * inicializa sus componentes, estilos y eventos.
+     */
     public FrmMisTelefonos(UsuarioDTO sesion) {
         this.sesionActual = sesion;
 
@@ -65,12 +76,17 @@ public class FrmMisTelefonos extends JFrame {
         cargarTelefonos();
     }
 
+    
     private void inicializarBOs() {
         IConexionBD conexion = new ConexionBD();
         ITelefonoDAO telefonoDAO = new TelefonoDAO(conexion);
         telefonoBO = new TelefonoBO(telefonoDAO);
     }
 
+    /**
+     * Inicializa y posiciona todos los componentes gráficos dentro del panel
+     * principal.
+     */
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
@@ -118,6 +134,9 @@ public class FrmMisTelefonos extends JFrame {
         PnlPrincipal.add(BtnRegresar);
     }
 
+    /**
+     * Aplica estilos visuales personalizados a los botones y panel principal.
+     */
     private void aplicarEstilos() {
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
@@ -132,6 +151,9 @@ public class FrmMisTelefonos extends JFrame {
         BtnRegresar.setForeground(Color.WHITE);
     }
 
+    /**
+     * Define los eventos asociados a los botones de la ventana.
+     */
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
@@ -175,6 +197,9 @@ public class FrmMisTelefonos extends JFrame {
         });
     }
 
+    /**
+     * Carga telefonos
+     */
     private void cargarTelefonos() {
 
         try {
