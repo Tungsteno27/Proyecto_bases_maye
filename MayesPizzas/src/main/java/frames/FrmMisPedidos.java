@@ -6,22 +6,41 @@ package frames;
 
 import javax.swing.*;
 import java.awt.*;
+import negocio.DTOs.UsuarioDTO;
+import java.util.List;
+
+import negocio.DTOs.UsuarioDTO;
+import negocio.DTOs.PedidoDTO;
+import negocio.BOs.IPedidoBO;
+import negocio.BOs.PedidoBO;
+import negocio.Exception.NegocioException;
+
+import persistencia.DAOs.IPedidoDAO;
+import persistencia.DAOs.PedidoDAO;
+import persistencia.conexion.IConexionBD;
+import persistencia.conexion.ConexionBD;
 
 /**
+ * Ventana que muestra los pedidos programados del cliente logueado.
  *
- * @author Dell PC
+ * @author Noelia
  */
 public class FrmMisPedidos extends JFrame {
 
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
-    private JComboBox<String> CmbFiltro;
     private JButton BtnFiltrar;
     private JTextArea TxtAreaPedidos;
     private JScrollPane ScrollPedidos;
     private JButton BtnRegresar;
 
-    public FrmMisPedidos() {
+    private UsuarioDTO sesionActual;
+    private IPedidoBO pedidoBO;
+
+    public FrmMisPedidos(UsuarioDTO sesion) {
+        this.sesionActual = sesion;
+
+        inicializarBOs();
 
         setTitle("Mis pedidos - Maye´s Pizzas");
         setSize(600, 600);
@@ -35,6 +54,12 @@ public class FrmMisPedidos extends JFrame {
         setVisible(true);
     }
 
+    private void inicializarBOs() {
+        IConexionBD conexion = new ConexionBD();
+        IPedidoDAO pedidoDAO = new PedidoDAO(conexion);
+        pedidoBO = new PedidoBO(pedidoDAO);
+    }
+
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
@@ -46,18 +71,10 @@ public class FrmMisPedidos extends JFrame {
         LblTitulo.setBounds(150, 30, 300, 40);
         PnlPrincipal.add(LblTitulo);
 
-        // Filtro
-        CmbFiltro = new JComboBox<>();
-        CmbFiltro.addItem("Programados");
-        CmbFiltro.addItem("Express");
-        CmbFiltro.setBounds(150, 100, 200, 30);
-        PnlPrincipal.add(CmbFiltro);
-
-        BtnFiltrar = new JButton("Filtrar");
-        BtnFiltrar.setBounds(370, 100, 100, 30);
+        BtnFiltrar = new JButton("Cargar pedidos");
+        BtnFiltrar.setBounds(220, 100, 160, 30);
         PnlPrincipal.add(BtnFiltrar);
 
-        // Área de pedidos
         TxtAreaPedidos = new JTextArea();
         TxtAreaPedidos.setEditable(false);
 
@@ -65,7 +82,6 @@ public class FrmMisPedidos extends JFrame {
         ScrollPedidos.setBounds(80, 160, 440, 300);
         PnlPrincipal.add(ScrollPedidos);
 
-        // Botón regresar
         BtnRegresar = new JButton("Regresar");
         BtnRegresar.setBounds(230, 500, 140, 35);
         PnlPrincipal.add(BtnRegresar);
@@ -85,26 +101,43 @@ public class FrmMisPedidos extends JFrame {
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
-            new FrmMenuUsuario();
+            new FrmMenuUsuario(sesionActual);
             dispose();
         });
 
         BtnFiltrar.addActionListener(e -> {
 
-            String filtro = (String) CmbFiltro.getSelectedItem();
+            try {
 
-            TxtAreaPedidos.setText(""); // limpiar
+                TxtAreaPedidos.setText("");
 
-            if (filtro.equals("Programados")) {
+                List<PedidoDTO> pedidos
+                        = pedidoBO.consultarPedidosProgramadosPorCliente(
+                                sesionActual.getIdUsuario()
+                        );
 
-                TxtAreaPedidos.append("27/11/25 - Pizza Pepperoni x 2- $300\n");
-                TxtAreaPedidos.append("21/11/25 - Pizza Hawaiana - $250\n");
-                TxtAreaPedidos.append("13/11/25 - Pizza Queso - $125\n");
+                if (pedidos.isEmpty()) {
+                    TxtAreaPedidos.append("No tienes pedidos programados.\n");
+                    return;
+                }
 
-            } else {
+                for (PedidoDTO p : pedidos) {
 
-                TxtAreaPedidos.append("02/12/25 - Pizza Express Pepperoni - $150\n");
-                TxtAreaPedidos.append("30/11/25 - Pizza Express Queso - $125\n");
+                    TxtAreaPedidos.append(
+                            "Pedido #" + p.getIdPedido()
+                            + "\nFecha: " + p.getFechaCreacion()
+                            + "\nEstado: " + p.getEstado()
+                            + "\nTotal: $" + p.getTotalPagar()
+                    );
+                }
+
+            } catch (NegocioException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         });
     }
