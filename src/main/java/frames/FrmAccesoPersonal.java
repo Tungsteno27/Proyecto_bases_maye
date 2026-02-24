@@ -32,6 +32,13 @@ public class FrmAccesoPersonal extends JFrame {
     /**
      * Constructor de la clase FrmAccesoPersonal. Configura la ventana e
      * inicializa sus componentes visuales y eventos asociados.
+     *
+     * Inicializa y posiciona los componentes gráficos que conforman la interfaz
+     * de acceso.
+     *
+     * Define los eventos asociados a los botones.
+     * Permite validar el acceso del personal o regresar a la pantalla
+     * principal.
      */
     public FrmAccesoPersonal() {
 
@@ -69,7 +76,7 @@ public class FrmAccesoPersonal extends JFrame {
 
         BtnIngresar = new JButton("Ingresar");
         BtnIngresar.setBounds(60, 320, 270, 40);
-        BtnIngresar.setBackground(new Color(255, 167, 38)); // naranja pizza
+        BtnIngresar.setBackground(new Color(255, 167, 38));
         BtnIngresar.setFocusPainted(false);
         add(BtnIngresar);
 
@@ -81,8 +88,8 @@ public class FrmAccesoPersonal extends JFrame {
 
         // Eventos
         BtnIngresar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "Todo fine");
-            // de aca va el FrmPanelPersonal
+            new FrmPanelPersonal();
+            dispose();
         });
 
         BtnVolver.addActionListener(e -> {
