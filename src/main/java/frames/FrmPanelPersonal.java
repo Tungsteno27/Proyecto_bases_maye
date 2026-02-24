@@ -5,36 +5,44 @@
 package frames;
 
 import java.awt.Color;
+import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import negocio.DTOs.UsuarioDTO; // Importante para la sesión
 
 /**
  *
  * @author julian izaguirre
  */
-public class FrmPanelPersonal extends JFrame{
+public class FrmPanelPersonal extends JFrame {
     
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
-    private JButton BtnCrearPedidoProgramado;
-    private JButton BtnMisPedidos;
-    private JButton BtnMiPerfil;
-    private JButton BtnMisTelefonos;
+    private JButton BtnGestionProductos;
+    private JButton BtnGestionClientes;
     private JButton BtnCerrarSesion;
+    
+    private UsuarioDTO sesionActual; 
 
-    public FrmPanelPersonal() {
-        setTitle("Menú - Maye´s Pizzas");
-        setSize(500, 550);
+    /**
+     * 
+     * @param sesion 
+     */
+    public FrmPanelPersonal(UsuarioDTO sesion) {
+        this.sesionActual = sesion;
+        
+        setTitle("Panel de Control - Maye´s Pizzas");
+        setSize(500, 450);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         inicializarComponentes();
         aplicarEstilos();
-        // agregarEventos();
+        agregarEventos(); 
 
         setVisible(true);
     }
@@ -45,29 +53,22 @@ public class FrmPanelPersonal extends JFrame{
         PnlPrincipal.setLayout(null);
         add(PnlPrincipal);
 
-        LblTitulo = new JLabel("BIENVENIDO");
+        LblTitulo = new JLabel("PANEL DE " + sesionActual.getRol().name());
         LblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         LblTitulo.setBounds(100, 40, 300, 40);
+        LblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
         PnlPrincipal.add(LblTitulo);
 
-        BtnCrearPedidoProgramado = new JButton("Crear pedido programado");
-        BtnCrearPedidoProgramado.setBounds(125, 120, 250, 40);
-        PnlPrincipal.add(BtnCrearPedidoProgramado);
+        BtnGestionProductos = new JButton("Gestión de Productos");
+        BtnGestionProductos.setBounds(125, 120, 250, 40);
+        PnlPrincipal.add(BtnGestionProductos);
 
-        BtnMisPedidos = new JButton("Mis pedidos");
-        BtnMisPedidos.setBounds(125, 180, 250, 40);
-        PnlPrincipal.add(BtnMisPedidos);
-
-        BtnMiPerfil = new JButton("Mi perfil");
-        BtnMiPerfil.setBounds(125, 240, 250, 40);
-        PnlPrincipal.add(BtnMiPerfil);
-
-        BtnMisTelefonos = new JButton("Mis teléfonos");
-        BtnMisTelefonos.setBounds(125, 300, 250, 40);
-        PnlPrincipal.add(BtnMisTelefonos);
+        BtnGestionClientes = new JButton("Gestión de Clientes");
+        BtnGestionClientes.setBounds(125, 180, 250, 40);
+        PnlPrincipal.add(BtnGestionClientes);
 
         BtnCerrarSesion = new JButton("Cerrar sesión");
-        BtnCerrarSesion.setBounds(125, 380, 250, 40);
+        BtnCerrarSesion.setBounds(125, 280, 250, 40);
         PnlPrincipal.add(BtnCerrarSesion);
     }
 
@@ -75,21 +76,31 @@ public class FrmPanelPersonal extends JFrame{
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
 
-        BtnCrearPedidoProgramado.setBackground(new Color(255, 140, 0));
-        BtnCrearPedidoProgramado.setForeground(Color.WHITE);
+        BtnGestionProductos.setBackground(new Color(183, 28, 28)); 
+        BtnGestionProductos.setForeground(Color.WHITE);
 
-        BtnMisPedidos.setBackground(new Color(255, 140, 0));
-        BtnMisPedidos.setForeground(Color.WHITE);
+        BtnGestionClientes.setBackground(new Color(183, 28, 28));
+        BtnGestionClientes.setForeground(Color.WHITE);
 
-        BtnMiPerfil.setBackground(new Color(255, 140, 0));
-        BtnMiPerfil.setForeground(Color.WHITE);
-
-        BtnMisTelefonos.setBackground(new Color(255, 140, 0));
-        BtnMisTelefonos.setForeground(Color.WHITE);
-
-        BtnCerrarSesion.setBackground(new Color(200, 0, 0));
+        BtnCerrarSesion.setBackground(new Color(50, 50, 50)); 
         BtnCerrarSesion.setForeground(Color.WHITE);
     }
     
-    
+    private void agregarEventos() {
+        
+        BtnCerrarSesion.addActionListener(e -> {
+            new FrmPantallaBienvenida();
+            dispose();
+        });
+        
+        BtnGestionProductos.addActionListener(e -> {
+            new FrmGestionProductos(sesionActual); // crud de los productos mi caso de uso 
+            dispose();
+        });
+        
+        BtnGestionClientes.addActionListener(e -> {
+            new FrmGestionClientes(sesionActual);
+            dispose();
+        });
+    }
 }
