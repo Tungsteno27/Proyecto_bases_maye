@@ -6,15 +6,21 @@ package negocio.BOs;
 
 import negocio.DTOs.PedidoDTO;
 import negocio.Exception.NegocioException;
+import java.util.List;
 
 /**
- *
- * @author julian izaguirre
+ * Define las operaciones de negocio relacionadas con pedidos.
  */
 public interface IPedidoBO {
+
     /**
-     * registra un nuevo pedido en la base de datos y retorna el DTO con su ID generado
+     * Registra un nuevo pedido en la base de datos.
      */
     PedidoDTO registrarPedido(PedidoDTO pedido) throws NegocioException;
-}
 
+    /**
+     * Consulta los pedidos programados asociados a un cliente.
+     */
+    List<PedidoDTO> consultarPedidosProgramadosPorCliente(Integer idCliente)
+            throws NegocioException;
+}
