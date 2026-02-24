@@ -146,7 +146,7 @@ public class FrmLogin extends JFrame {
                     //Tal vez sea buena idea cambiar el constructor para que reciba el id del usuario, así manejamos diferentes perfiles
                     new FrmMenuUsuario(sesion);
                 } else {
-                    new FrmGestionProductos();
+                    new FrmGestionProductos(sesion);
                 }
                 dispose();
                 
