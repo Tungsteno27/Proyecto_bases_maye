@@ -16,6 +16,20 @@ public interface IProductoDAO {
     
     public List<Producto> obtenerProductosDisponibles() throws PersistenciaException;
     public Producto obtenerProductoPorId(int id) throws PersistenciaException;
-    public int insertarProducto(persistencia.Dominio.Producto producto) throws PersistenciaException;
-     
+    public int insertarProducto(Producto producto) throws PersistenciaException;
+    
+    /**
+     * 
+     * @param producto
+     * @throws PersistenciaException 
+     */
+    public void actualizarProducto(Producto producto) throws PersistenciaException;
+    
+    /**
+     * 
+     * @param idProducto
+     * @throws PersistenciaException 
+     */
+    public void eliminarProducto(int idProducto) throws PersistenciaException;
+    
 }
