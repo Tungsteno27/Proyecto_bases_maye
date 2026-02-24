@@ -114,4 +114,50 @@ public class ProductoBO implements IProductoBO{
             throw new NegocioException("Error al registrar el producto: " + ex.getMessage());
         }
     }
+    
+    /**
+     * 
+     * @param productoDTO
+     * @throws NegocioException 
+     */
+    @Override
+    public void actualizarProducto(ProductoDTO productoDTO) throws NegocioException {
+        try {
+            // Mapeo de DTO a Dominio
+            Producto producto = new Producto();
+            producto.setIdProducto(productoDTO.getIdProducto());
+            producto.setNombre(productoDTO.getNombre());
+            producto.setPrecio(productoDTO.getPrecio());
+            producto.setDescripcion(productoDTO.getDescripcion());
+            
+            if (productoDTO.getEstado() != null && !productoDTO.getEstado().isEmpty()) {
+                producto.setEstado(persistencia.Dominio.EstadoProducto.valueOf(productoDTO.getEstado().toUpperCase()));
+            }
+
+            if (productoDTO.getTamanio() != null && !productoDTO.getTamanio().isEmpty()) {
+                producto.setTamanio(persistencia.Dominio.TamanioProducto.valueOf(productoDTO.getTamanio().toUpperCase()));
+            }
+
+            // Mandamos a actualizar al DAO
+            productoDAO.actualizarProducto(producto);
+
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al actualizar el producto: " + ex.getMessage());
+        }
+    }
+    
+    /**
+     * 
+     * @param idProducto
+     * @throws NegocioException 
+     */
+    @Override
+    public void eliminarProducto(int idProducto) throws NegocioException {
+        try {
+            productoDAO.eliminarProducto(idProducto);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al eliminar el producto: " + ex.getMessage());
+        }
+    }
+    
 }
