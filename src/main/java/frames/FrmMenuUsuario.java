@@ -128,7 +128,7 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnMisPedidos.addActionListener(e -> {
-            // new FrmMisPedidos(); cambie esto ahorita se corrige
+            new FrmMisPedidos(); 
             dispose();
         });
 
@@ -138,7 +138,7 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnMisTelefonos.addActionListener(e -> {
-            //new FrmMisTelefonos(); cambie esto ahorita se corrige
+            new FrmMisTelefonos();
             dispose();
         });
     }
