@@ -7,10 +7,16 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Frame para el acceso de los empleados
+ * Representa la ventana de acceso para el personal del sistemas.
+ * <p>
+ * Esta clase permite a los empleados ingresar mediante usuario y contraseña
+ * para acceder al panel administrativo. También ofrece la opción de regresar a
+ * la pantalla principal.
+ * </p>
+ * Forma parte de la capa de presentación.
+ *
  * @author Noelia E.N.
  */
-
 public class FrmAccesoPersonal extends JFrame {
 
     private JLabel LblTitulo;
@@ -23,6 +29,10 @@ public class FrmAccesoPersonal extends JFrame {
     private JButton BtnIngresar;
     private JButton BtnVolver;
 
+    /**
+     * Constructor de la clase FrmAccesoPersonal. Configura la ventana e
+     * inicializa sus componentes visuales y eventos asociados.
+     */
     public FrmAccesoPersonal() {
 
         setTitle("Acceso Personal - Maye´s Pizzas");
