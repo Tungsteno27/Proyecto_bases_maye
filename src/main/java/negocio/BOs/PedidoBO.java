@@ -4,6 +4,8 @@
  */
 package negocio.BOs;
 
+import java.util.ArrayList;
+import java.util.List;
 import negocio.DTOs.PedidoDTO;
 import negocio.Exception.NegocioException;
 import persistencia.DAOs.IPedidoDAO;
@@ -15,48 +17,82 @@ import persistencia.Exception.PersistenciaException;
  *
  * @author julian izaguirre
  */
-public class PedidoBO implements IPedidoBO{
+public class PedidoBO implements IPedidoBO {
+
     private final IPedidoDAO pedidoDAO;
-    
+
     /**
-     * 
-     * @param pedidoDAO 
+     *
+     * @param pedidoDAO
      */
     public PedidoBO(IPedidoDAO pedidoDAO) {
         this.pedidoDAO = pedidoDAO;
     }
-    
+
     /**
-     * 
+     *
      * @param pedidoDTO
      * @return
-     * @throws NegocioException 
+     * @throws NegocioException
      */
     @Override
     public PedidoDTO registrarPedido(PedidoDTO pedidoDTO) throws NegocioException {
         try {
             // Mapeo de DTO a Dominio
             Pedido pedido = new Pedido();
-            pedido.setIdCliente(pedidoDTO.getIdCliente()); 
+            pedido.setIdCliente(pedidoDTO.getIdCliente());
             pedido.setTotalPagar(pedidoDTO.getTotalPagar());
-            if (pedidoDTO.getEstado() != null && !pedidoDTO.getEstado().trim().isEmpty()) { 
+            if (pedidoDTO.getEstado() != null && !pedidoDTO.getEstado().trim().isEmpty()) {
                 try {
                     pedido.setEstado(EstadoPedido.valueOf(pedidoDTO.getEstado().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    pedido.setEstado(EstadoPedido.PENDIENTE); 
+                    pedido.setEstado(EstadoPedido.PENDIENTE);
                 }
             } else {
-                pedido.setEstado(EstadoPedido.PENDIENTE); 
+                pedido.setEstado(EstadoPedido.PENDIENTE);
             }
 
             // aquie lo que hago es que guardo el pedido en la BD 
             // usando el metodo del DAO que tiene el tolano
             int idGenerado = pedidoDAO.insertarPedido(pedido);
             return pedidoDTO;
-            
+
         } catch (PersistenciaException ex) {
             throw new NegocioException("Error en base de datos al registrar el pedido: " + ex.getMessage());
         }
     }
-    
+
+    @Override
+    public List<PedidoDTO> consultarPedidosProgramadosPorCliente(Integer idCliente)
+            throws NegocioException {
+
+        try {
+
+            List<Pedido> pedidos
+                    = pedidoDAO.consultarPedidosProgramadosPorCliente(idCliente);
+
+            List<PedidoDTO> pedidosDTO = new ArrayList<>();
+
+            for (Pedido p : pedidos) {
+
+                PedidoDTO dto = new PedidoDTO();
+
+                dto.setIdPedido(p.getIdPedido());
+                dto.setIdCliente(p.getIdCliente());
+                dto.setTotalPagar(p.getTotalPagar());
+                dto.setEstado(p.getEstado().name());
+                dto.setFechaCreacion(p.getFechaCreacion());
+
+                pedidosDTO.add(dto);
+            }
+
+            return pedidosDTO;
+
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(
+                    "Error al consultar pedidos programados: " + ex.getMessage()
+            );
+        }
+    }
+
 }
