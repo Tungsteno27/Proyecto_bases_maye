@@ -30,4 +30,19 @@ public interface IProductoBO {
      * @throws NegocioException 
      */
     ProductoDTO agregarProducto(ProductoDTO producto) throws NegocioException;
+    
+    /**
+     * 
+     * @param productoDTO
+     * @throws NegocioException 
+     */
+    public void actualizarProducto(ProductoDTO productoDTO) throws NegocioException;
+    
+    /**
+     * 
+     * @param idProducto
+     * @throws NegocioException 
+     */
+    public void eliminarProducto(int idProducto) throws NegocioException;
+    
 }
