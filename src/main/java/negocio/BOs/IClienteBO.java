@@ -4,6 +4,7 @@
  */
 package negocio.BOs;
 
+import java.util.List;
 import negocio.DTOs.ClienteDTO;
 import negocio.Exception.NegocioException;
 
@@ -36,4 +37,26 @@ public interface IClienteBO {
      * @throws NegocioException 
      */
     ClienteDTO obtenerClientePorIdUsuario(int idUsuario) throws NegocioException;
+    
+    /**
+     * 
+     * @return
+     * @throws NegocioException 
+     */
+    public List<ClienteDTO> obtenerTodosLosClientes() throws NegocioException;
+    
+    /**
+     * 
+     * @param idCliente
+     * @throws NegocioException 
+     */
+    public void darDeBajaCliente(int idCliente) throws NegocioException;
+    
+    /**
+     * 
+     * @param idCliente
+     * @param estatus
+     * @throws NegocioException 
+     */
+    public void cambiarEstatus(int idCliente, String estatus) throws NegocioException;
 }
