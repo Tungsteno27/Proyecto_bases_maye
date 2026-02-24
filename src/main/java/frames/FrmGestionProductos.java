@@ -11,43 +11,46 @@ import java.util.List;
 import negocio.BOs.IProductoBO;
 import negocio.BOs.ProductoBO;
 import negocio.DTOs.ProductoDTO;
+import negocio.DTOs.UsuarioDTO; // Importante para la sesión
 import negocio.Exception.NegocioException;
 import persistencia.DAOs.IProductoDAO;
 import persistencia.DAOs.ProductoDAO;
 import persistencia.conexion.ConexionBD;
 
 /**
- * Pantalla para el CRUD de Productos 
+ * pantalla para el CRUD de Productos
+ * @author julian izaguirre
  */
 public class FrmGestionProductos extends JFrame {
 
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
     
-    // Formulario
     private JLabel LblNombre, LblDescripcion, LblPrecio, LblTamanio, LblEstado;
     private JTextField TxtNombre, TxtDescripcion, TxtPrecio;
     private JComboBox<String> CmbTamanio, CmbEstado;
     
-    // Botones
-    private JButton BtnGuardar, BtnLimpiar, BtnRegresar;
+    // buttons
+    private JButton BtnGuardar, BtnActualizar, BtnEliminar, BtnLimpiar, BtnRegresar;
     
     // Tabla
     private JTable TblProductos;
     private DefaultTableModel modeloTabla;
     private JScrollPane ScrollTabla;
-
-    // Conexión a la capa de negocio
     private IProductoBO productoBO;
+    private UsuarioDTO sesionActual;
+    
+    private int idProductoSeleccionado = -1;
 
-    public FrmGestionProductos() {
+    public FrmGestionProductos(UsuarioDTO sesion) {
+        this.sesionActual = sesion; 
+
         setTitle("Gestión de Productos - Maye´s Pizzas");
-        setSize(850, 500); 
+        setSize(850, 520);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         inicializarNegocio();
-
         inicializarComponentes();
         aplicarEstilos();
         agregarEventos();
@@ -74,8 +77,6 @@ public class FrmGestionProductos extends JFrame {
         LblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
         PnlPrincipal.add(LblTitulo);
 
-        // lado izquierdo formulario
-        
         LblNombre = new JLabel("Nombre de la Pizza *");
         LblNombre.setBounds(30, 80, 200, 25);
         PnlPrincipal.add(LblNombre);
@@ -111,26 +112,35 @@ public class FrmGestionProductos extends JFrame {
         CmbEstado.setBounds(30, 365, 200, 30);
         PnlPrincipal.add(CmbEstado);
 
-        // lado derecho tablilla
-        
-        modeloTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Precio", "Tamaño", "Estado"}, 0);
+        modeloTabla = new DefaultTableModel(new String[]{"ID", "Nombre", "Precio", "Tamaño", "Estado"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; } // Que no puedan escribir sobre la tabla
+        };
         TblProductos = new JTable(modeloTabla);
         ScrollTabla = new JScrollPane(TblProductos);
         ScrollTabla.setBounds(260, 105, 540, 290);
         PnlPrincipal.add(ScrollTabla);
 
-        // votones
-        
-        BtnGuardar = new JButton("Guardar Producto");
-        BtnGuardar.setBounds(30, 415, 150, 35);
+        BtnGuardar = new JButton("Guardar Nuevo");
+        BtnGuardar.setBounds(30, 415, 130, 35);
         PnlPrincipal.add(BtnGuardar);
 
-        BtnLimpiar = new JButton("Limpiar Campos");
-        BtnLimpiar.setBounds(260, 415, 140, 35);
+        BtnActualizar = new JButton("Actualizar");
+        BtnActualizar.setBounds(170, 415, 130, 35);
+        BtnActualizar.setEnabled(false); 
+        PnlPrincipal.add(BtnActualizar);
+
+        BtnEliminar = new JButton("Eliminar");
+        BtnEliminar.setBounds(310, 415, 130, 35);
+        BtnEliminar.setEnabled(false); 
+        PnlPrincipal.add(BtnEliminar);
+
+        BtnLimpiar = new JButton("Limpiar");
+        BtnLimpiar.setBounds(450, 415, 130, 35);
         PnlPrincipal.add(BtnLimpiar);
 
-        BtnRegresar = new JButton("Regresar");
-        BtnRegresar.setBounds(660, 415, 140, 35);
+        BtnRegresar = new JButton("Regresar al Panel");
+        BtnRegresar.setBounds(650, 415, 150, 35);
         PnlPrincipal.add(BtnRegresar);
     }
 
@@ -140,75 +150,103 @@ public class FrmGestionProductos extends JFrame {
         BtnGuardar.setBackground(new Color(255, 140, 0));
         BtnGuardar.setForeground(Color.WHITE);
         
+        BtnActualizar.setBackground(new Color(0, 128, 0)); // Verde
+        BtnActualizar.setForeground(Color.WHITE);
+        
+        BtnEliminar.setBackground(new Color(200, 0, 0)); // Rojo
+        BtnEliminar.setForeground(Color.WHITE);
+
         BtnLimpiar.setBackground(new Color(100, 100, 100));
         BtnLimpiar.setForeground(Color.WHITE);
 
-        BtnRegresar.setBackground(new Color(200, 0, 0));
+        BtnRegresar.setBackground(new Color(50, 50, 50));
         BtnRegresar.setForeground(Color.WHITE);
     }
 
     private void agregarEventos() {
         BtnRegresar.addActionListener(e -> {
-            // menú de admin
-            // new FrmMenuAdministrador(); 
+            new FrmPanelPersonal(sesionActual); 
             dispose();
         });
 
+        // limpiar el formulario
         BtnLimpiar.addActionListener(e -> limpiarFormulario());
 
+        TblProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int fila = TblProductos.getSelectedRow();
+                if (fila != -1) {
+                    idProductoSeleccionado = (int) modeloTabla.getValueAt(fila, 0);
+                    TxtNombre.setText(modeloTabla.getValueAt(fila, 1).toString());
+                    
+                    String precioStr = modeloTabla.getValueAt(fila, 2).toString().replace("$", "");
+                    TxtPrecio.setText(precioStr);
+                    
+                    CmbTamanio.setSelectedItem(modeloTabla.getValueAt(fila, 3).toString());
+                    CmbEstado.setSelectedItem(modeloTabla.getValueAt(fila, 4).toString());
+                    // la descripcion no esta en la tabla, asi que la consultamos de la BD
+                    try {
+                        ProductoDTO p = productoBO.obtenerProductoPorId(idProductoSeleccionado);
+                        TxtDescripcion.setText(p.getDescripcion());
+                    } catch (Exception ignored) {}
+
+                    BtnGuardar.setEnabled(false);
+                    BtnActualizar.setEnabled(true);
+                    BtnEliminar.setEnabled(true);
+                }
+            }
+        });
+
         BtnGuardar.addActionListener(e -> {
-            BtnGuardar.setEnabled(false); // Evitar doble clic
-
-            String nombre = TxtNombre.getText().trim();
-            String descripcion = TxtDescripcion.getText().trim();
-            String precioStr = TxtPrecio.getText().trim();
-            String tamanio = CmbTamanio.getSelectedItem().toString();
-            String estado = CmbEstado.getSelectedItem().toString();
-
-            // Validaciones básicas
-            if (nombre.isEmpty() || descripcion.isEmpty() || precioStr.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Debe completar todos los campos marcados con *", "Error", JOptionPane.ERROR_MESSAGE);
-                BtnGuardar.setEnabled(true);
-                return;
-            }
-
-            double precio;
-            try {
-                precio = Double.parseDouble(precioStr);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "El precio debe ser un número válido (ej. 150.50)", "Error", JOptionPane.ERROR_MESSAGE);
-                BtnGuardar.setEnabled(true);
-                return;
-            }
-
-            // Armamos el DTO
-            ProductoDTO nuevoProducto = new ProductoDTO();
-            nuevoProducto.setNombre(nombre);
-            nuevoProducto.setDescripcion(descripcion);
-            nuevoProducto.setPrecio(precio);
-            nuevoProducto.setTamanio(tamanio);
-            nuevoProducto.setEstado(estado);
+            if (!validarFormulario()) return;
 
             try {
-                // Lo mandamos a la base de datos
-                productoBO.agregarProducto(nuevoProducto);
-
-                JOptionPane.showMessageDialog(this, "Producto registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                
+                ProductoDTO nuevo = capturarDatosFormulario();
+                productoBO.agregarProducto(nuevo);
+                JOptionPane.showMessageDialog(this, "Producto registrado con exito");
                 limpiarFormulario();
-                cargarTabla(); // Refrescamos la tabla para que aparezca la nueva pizza
-
+                cargarTabla();
             } catch (NegocioException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al guardar", JOptionPane.ERROR_MESSAGE);
-            } finally {
-                BtnGuardar.setEnabled(true); // Siempre volvemos a prender el botón al terminar
+            }
+        });
+
+        BtnActualizar.addActionListener(e -> {
+            if (!validarFormulario()) return;
+
+            try {
+                ProductoDTO modificado = capturarDatosFormulario();
+                modificado.setIdProducto(idProductoSeleccionado); // Le ponemos el ID de la que seleccionaron
+                productoBO.actualizarProducto(modificado); 
+                
+                JOptionPane.showMessageDialog(this, "Producto actualizado con exiot");
+                limpiarFormulario();
+                cargarTabla();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Funcion pendiente de implementar en el BO: " + ex.getMessage());
+            }
+        });
+
+        // eliminar pizza
+        BtnEliminar.addActionListener(e -> {
+            int confirmacion = JOptionPane.showConfirmDialog(this, "seguro de que deseas eliminar este producto", "Confirmar", JOptionPane.YES_NO_OPTION);
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                try {
+                    productoBO.eliminarProducto(idProductoSeleccionado);
+                    
+                    JOptionPane.showMessageDialog(this, "Producto eliminado");
+                    limpiarFormulario();
+                    cargarTabla();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Función pendiente de implementar en el BO: " + ex.getMessage());
+                }
             }
         });
     }
 
-    // Método para llenar la tabla con la información de la base de datos
     private void cargarTabla() {
-        modeloTabla.setRowCount(0); // Limpiamos la tabla antes de cargar
+        modeloTabla.setRowCount(0);
         try {
             List<ProductoDTO> listaProductos = productoBO.obtenerProductosDisponibles();
             for (ProductoDTO prod : listaProductos) {
@@ -226,10 +264,48 @@ public class FrmGestionProductos extends JFrame {
     }
 
     private void limpiarFormulario() {
+        idProductoSeleccionado = -1;
         TxtNombre.setText("");
         TxtDescripcion.setText("");
         TxtPrecio.setText("");
         CmbTamanio.setSelectedIndex(0);
         CmbEstado.setSelectedIndex(0);
+        
+        BtnGuardar.setEnabled(true);
+        BtnActualizar.setEnabled(false);
+        BtnEliminar.setEnabled(false);
+        TblProductos.clearSelection();
+    }
+    
+    /**
+     * ayuda para no repetir codigo
+     * @return 
+     */
+    private boolean validarFormulario() {
+        if (TxtNombre.getText().trim().isEmpty() || TxtDescripcion.getText().trim().isEmpty() || TxtPrecio.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe completar todos los campos marcados con algo", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        try {
+            Double.parseDouble(TxtPrecio.getText().trim());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "El precio debe ser numerico bro", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * ayuda para recolectar lo que se escribio
+     * @return 
+     */
+    private ProductoDTO capturarDatosFormulario() {
+        ProductoDTO p = new ProductoDTO();
+        p.setNombre(TxtNombre.getText().trim());
+        p.setDescripcion(TxtDescripcion.getText().trim());
+        p.setPrecio(Double.parseDouble(TxtPrecio.getText().trim()));
+        p.setTamanio(CmbTamanio.getSelectedItem().toString());
+        p.setEstado(CmbEstado.getSelectedItem().toString());
+        return p;
     }
 }
