@@ -68,6 +68,17 @@ public class UsuarioBO implements IUsuarioBO {
         }
     }
     
-    
+    @Override
+    public void actualizarPassword(int idUsuario, String nuevaPassword) throws NegocioException {
+        try {
+            // Encriptamos la nueva contraseña igual que cuando se registro,
+            // tremendo el tolano aquui
+            String nuevoHash = BCrypt.hashpw(nuevaPassword, BCrypt.gensalt());
+            // la mandamos al DAO para que haga el UPDATE
+            usuarioDAO.actualizarPassword(idUsuario, nuevoHash);
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al actualizar la contraseña: " + e.getMessage());
+        }
+    }
     
 }

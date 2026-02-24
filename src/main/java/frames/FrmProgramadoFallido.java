@@ -5,6 +5,7 @@
 package frames;
 import javax.swing.*;
 import java.awt.*;
+import negocio.DTOs.UsuarioDTO;
 
 /**
  *
@@ -16,8 +17,10 @@ public class FrmProgramadoFallido extends JFrame {
     private JLabel LblTitulo;
     private JLabel LblMensaje;
     private JButton BtnInicio;
+    private UsuarioDTO sesionActual;
 
-    public FrmProgramadoFallido() {
+    public FrmProgramadoFallido(UsuarioDTO sesion) {
+        this.sesionActual = sesion;
 
         setTitle("Pedido Fallido");
         setSize(500, 420);
@@ -54,7 +57,7 @@ public class FrmProgramadoFallido extends JFrame {
         add(BtnInicio);
 
         BtnInicio.addActionListener(e -> {
-            new FrmMenuUsuario();
+            new FrmMenuUsuario(sesionActual);
             dispose();
         });
     }

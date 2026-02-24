@@ -6,6 +6,7 @@ package frames;
 
 import javax.swing.*;
 import java.awt.*;
+import negocio.DTOs.UsuarioDTO;
 
 /**
  *
@@ -21,7 +22,10 @@ public class FrmMisPedidos extends JFrame {
     private JScrollPane ScrollPedidos;
     private JButton BtnRegresar;
 
-    public FrmMisPedidos() {
+    private UsuarioDTO sesionActual;
+
+    public FrmMisPedidos(UsuarioDTO sesion) {
+        this.sesionActual = sesion;
 
         setTitle("Mis pedidos - Maye´s Pizzas");
         setSize(600, 600);
@@ -85,7 +89,7 @@ public class FrmMisPedidos extends JFrame {
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
-            new FrmMenuUsuario();
+            new FrmMenuUsuario(sesionActual);
             dispose();
         });
 

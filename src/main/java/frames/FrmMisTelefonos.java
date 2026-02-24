@@ -5,6 +5,7 @@
 package frames;
 import javax.swing.*;
 import java.awt.*;
+import negocio.DTOs.UsuarioDTO;
 
 /**
  *
@@ -30,8 +31,11 @@ public class FrmMisTelefonos extends JFrame {
     private JButton BtnGuardar;
     private JButton BtnRegresar;
 
-    public FrmMisTelefonos() {
+    private UsuarioDTO sesionActual; // Mochila
 
+    public FrmMisTelefonos(UsuarioDTO sesion) {
+        this.sesionActual = sesion;
+        
         setTitle("Mis teléfonos - Maye´s Pizzas");
         setSize(600, 600);
         setLocationRelativeTo(null);
@@ -115,7 +119,7 @@ public class FrmMisTelefonos extends JFrame {
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
-            new FrmMenuUsuario();
+            new FrmMenuUsuario(sesionActual);
             dispose();
         });
 

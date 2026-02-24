@@ -16,4 +16,11 @@ public interface IUsuarioDAO {
     public Usuario obtenerPorCorreo(String correo) throws PersistenciaException;
     public boolean existeCorreo(String correo) throws PersistenciaException;
     
+    /**
+     * 
+     * @param idUsuario
+     * @param nuevoHash
+     * @throws PersistenciaException 
+     */
+    public void actualizarPassword(int idUsuario, String nuevoHash) throws PersistenciaException;
 }

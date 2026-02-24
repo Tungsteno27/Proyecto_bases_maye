@@ -123,7 +123,7 @@ public class FrmLogin extends JFrame {
 
                 if (sesion.getRol() == RolUsuario.CLIENTE) {
                     //Tal vez sea buena idea cambiar el constructor para que reciba el id del usuario, así manejamos diferentes perfiles
-                    new FrmMenuUsuario();
+                    new FrmMenuUsuario(sesion);
                 } else {
                     new FrmGestionProductos();
                 }

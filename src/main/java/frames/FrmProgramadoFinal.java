@@ -6,6 +6,7 @@ package frames;
 
 import javax.swing.*;
 import java.awt.*;
+import negocio.DTOs.UsuarioDTO;
 
 public class FrmProgramadoFinal extends JFrame {
 
@@ -13,8 +14,11 @@ public class FrmProgramadoFinal extends JFrame {
     private JButton BtnInicio;
     private String numeroPedidoReal;
 
-    public FrmProgramadoFinal(String idPedidoReal) {
+    private UsuarioDTO sesionActual; // Mochila
+
+    public FrmProgramadoFinal(String idPedidoReal, UsuarioDTO sesion) {
         this.numeroPedidoReal = idPedidoReal;
+        this.sesionActual = sesion;
 
         setTitle("Pedido Finalizado");
         setSize(500, 450);
@@ -50,7 +54,7 @@ public class FrmProgramadoFinal extends JFrame {
         add(BtnInicio);
 
         BtnInicio.addActionListener(e -> {
-            new FrmMenuUsuario(); 
+            new FrmMenuUsuario(sesionActual); 
             dispose();
         });
     }

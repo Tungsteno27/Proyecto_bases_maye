@@ -13,6 +13,18 @@ import persistencia.Exception.PersistenciaException;
  */
 public interface IDireccionDAO {
     
+    /**
+     * 
+     * @param direccion
+     * @return
+     * @throws PersistenciaException 
+     */
     public int insertarDireccion(DireccionCliente direccion) throws PersistenciaException;
     
+    /**
+     * Actualiza una dirección existente en la base de datos
+     * @param direccion
+     * @throws PersistenciaException 
+     */
+    public void actualizarDireccion(DireccionCliente direccion) throws PersistenciaException;
 }

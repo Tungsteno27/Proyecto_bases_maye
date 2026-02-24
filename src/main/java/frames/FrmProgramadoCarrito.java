@@ -174,7 +174,7 @@ public class FrmProgramadoCarrito extends JFrame {
                 pedidoActual.setEstado("PENDIENTE");
                 PedidoDTO pedidoGuardado = pedidoBO.registrarPedido(pedidoActual);
                 
-                new FrmProgramadoFinal(String.valueOf(pedidoGuardado.getIdPedido()));
+                // new FrmProgramadoFinal(String.valueOf(pedidoGuardado.getIdPedido())); esto lo cambie ahorita se correige
                 dispose();
                 
             } catch (NegocioException ex) {

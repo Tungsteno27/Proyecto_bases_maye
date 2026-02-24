@@ -29,4 +29,11 @@ public interface IClienteBO {
      */
     ClienteDTO actualizarInformacion(ClienteDTO cliente) throws NegocioException;
     
+    /**
+     * Busca la información completa de un cliente usando el ID de su usuario
+     * @param idUsuario
+     * @return
+     * @throws NegocioException 
+     */
+    ClienteDTO obtenerClientePorIdUsuario(int idUsuario) throws NegocioException;
 }

@@ -67,10 +67,19 @@ public class ClienteDAO implements IClienteDAO {
             
             ps.setString(1, cliente.getNombres());
             ps.setString(2, cliente.getApellidoPaterno());
-            ps.setString(3, cliente.getApellidoMaterno());
+            if (cliente.getApellidoMaterno() == null || cliente.getApellidoMaterno().isEmpty()) {
+                ps.setNull(3, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(3, cliente.getApellidoMaterno());
+            }
             ps.setDate(4, Date.valueOf(cliente.getFechaNacimiento()));
             ps.setString(5, cliente.getEstatus().name());
-            ps.setInt(6, cliente.getDireccion().getIdDireccion());
+            if (cliente.getDireccion() == null) {
+                ps.setNull(6, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(6, cliente.getDireccion().getIdDireccion());
+            }
+            ps.setInt(7, cliente.getIdCliente());
             
             return ps.executeUpdate() > 0;
             
@@ -103,7 +112,7 @@ public class ClienteDAO implements IClienteDAO {
                     cliente.setNombres(rs.getString("nombres"));
                     cliente.setApellidoPaterno(rs.getString("apellidoPaterno"));
                     cliente.setApellidoMaterno(rs.getString("apellidoMaterno"));
-                    cliente.setEstatus(EstatusCliente.valueOf(rs.getString("estatus")));
+                    cliente.setEstatus(EstatusCliente.valueOf(rs.getString("estatus").toUpperCase()));
                     cliente.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate()); 
 
                     int idDireccion = rs.getInt("idDireccion");

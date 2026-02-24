@@ -50,4 +50,27 @@ public class DireccionDAO implements IDireccionDAO {
         throw new PersistenciaException("No se pudo obtener el ID de la dirección insertada");
     }
     
+    /**
+     * 
+     * @param direccion
+     * @throws PersistenciaException 
+     */
+    @Override
+    public void actualizarDireccion(DireccionCliente direccion) throws PersistenciaException {
+        String sql = "UPDATE DireccionesClientes SET calle = ?, numero = ?, colonia = ? WHERE idDireccion = ?";
+
+        try (Connection conn = conexionBD.crearConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, direccion.getCalle());
+            ps.setInt(2, direccion.getNumero());
+            ps.setString(3, direccion.getColonia());
+            ps.setInt(4, direccion.getIdDireccion());
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al actualizar la dirección: " + e.getMessage());
+        }
+    }
 }

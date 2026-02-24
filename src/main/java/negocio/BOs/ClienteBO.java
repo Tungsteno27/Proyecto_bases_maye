@@ -80,67 +80,108 @@ public class ClienteBO implements IClienteBO{
     }
     
     //JULIÁN QUIZÁS QUIERAS VER ESTO TAL VEZ ESTÁ MAL AHORA
+    // segun yo ya lo arregle con este cambio del down
     @Override
     public ClienteDTO actualizarInformacion(ClienteDTO clienteDTO) throws NegocioException {
         try {
-            // Mapeo directo de DTO a Dominio
+            Cliente clienteOriginal = clienteDAO.buscarPorId(clienteDTO.getIdCliente());
+            if (clienteOriginal == null) {
+                throw new NegocioException("No se encontro el cliente a actualizar.");
+            }
+
+            // Mapeo de DTO a Dominio 
             Cliente cliente = new Cliente();
             cliente.setIdCliente(clienteDTO.getIdCliente());
             cliente.setNombres(clienteDTO.getNombres());
             cliente.setApellidoPaterno(clienteDTO.getApellidoPaterno());
             cliente.setApellidoMaterno(clienteDTO.getApellidoMaterno());
             cliente.setFechaNacimiento(clienteDTO.getFechaNacimiento());
-            
             cliente.setEstatus(EstatusCliente.ACTIVO); 
-
-            // Mapeo de la dirección
             DireccionCliente direccion = new DireccionCliente();
             direccion.setCalle(clienteDTO.getCalle());
             direccion.setColonia(clienteDTO.getColonia());
-            // las otras validaciones despues las pongo, esta es la escencial bruh
+            
             if (clienteDTO.getNumero() != null && !clienteDTO.getNumero().isEmpty()) {
                 String numeroLimpio = clienteDTO.getNumero().replaceAll("\\D+", "");
-                
                 if (!numeroLimpio.isEmpty()) {
                     try {
                         direccion.setNumero(Integer.parseInt(numeroLimpio));
                     } catch (NumberFormatException e) {
                         direccion.setNumero(0); 
-                        // Por si es un numero absurdamente grande que supere el limite del int
                     }
                 } else {
                     direccion.setNumero(0); 
                 }
             }
+            
+            if (clienteOriginal.getDireccion() != null) {
+                direccion.setIdDireccion(clienteOriginal.getDireccion().getIdDireccion());
+                direccionDAO.actualizarDireccion(direccion); 
+            } else {
+                int nuevoIdDir = direccionDAO.insertarDireccion(direccion);
+                direccion.setIdDireccion(nuevoIdDir);
+            }
             cliente.setDireccion(direccion);
 
-            // Mapeo de la lista de teléfonos <---
-            if (clienteDTO.getTelefonos() != null && !clienteDTO.getTelefonos().isEmpty()) {
-                List<TelefonoCliente> listaTelefonos = new ArrayList<>();
-                
-                for (TelefonoDTO telDTO : clienteDTO.getTelefonos()) {
-                    TelefonoCliente telefono = new TelefonoCliente();
-                    telefono.setIdTelefono(telDTO.getIdTelefono()); 
-                    telefono.setNumero(telDTO.getNumero());
-                    telefono.setEtiqueta(telDTO.getEtiqueta()); 
-                    
-                    listaTelefonos.add(telefono);
-                }
-                cliente.setTelefonos(listaTelefonos);
-            }
-
             boolean actualizado = clienteDAO.actualizarCliente(cliente);
+            
+            if (clienteDTO.getTelefonos() != null) {
+                for (TelefonoDTO telDTO : clienteDTO.getTelefonos()) {
+                    if (telDTO.getIdTelefono() != 0) {
+                        telefonoBO.actualizarTelefono(telDTO);
+                    } else {
+                        telDTO.setIdCliente(cliente.getIdCliente());
+                        telefonoBO.agregarTelefono(telDTO); 
+                    }
+                }
+            }
+            
+            if (clienteDTO.getUsuario() != null && clienteDTO.getUsuario().getPassword() != null && !clienteDTO.getUsuario().getPassword().isEmpty()) {
+                usuarioBO.actualizarPassword(clienteDTO.getUsuario().getIdUsuario(), clienteDTO.getUsuario().getPassword());
+            }
             
             if (actualizado) {
                 return clienteDTO;
             } else {
-                throw new NegocioException("No se encontró el cliente a actualizar en la base de datos.");
+                throw new NegocioException("No se encontro el cliente a actualizar en la base de datos");
             }
             
         } catch (PersistenciaException ex) {
             throw new NegocioException("Error al actualizar la información del cliente: " + ex.getMessage());
         }
     }
+    
+    @Override
+    public ClienteDTO obtenerClientePorIdUsuario(int idUsuario) throws NegocioException {
+        try {
+            Cliente cliente = clienteDAO.buscarPorId(idUsuario);
+            
+            if (cliente == null) {
+                throw new NegocioException("No se encontró la información del perfil.");
+            }
+            
+            ClienteDTO dto = new ClienteDTO();
+            dto.setIdCliente(cliente.getIdCliente());
+            dto.setNombres(cliente.getNombres());
+            dto.setApellidoPaterno(cliente.getApellidoPaterno());
+            dto.setApellidoMaterno(cliente.getApellidoMaterno());
+            dto.setFechaNacimiento(cliente.getFechaNacimiento());
+            
+            if (cliente.getDireccion() != null) {
+                dto.setCalle(cliente.getDireccion().getCalle());
+                dto.setNumero(String.valueOf(cliente.getDireccion().getNumero()));
+                dto.setColonia(cliente.getDireccion().getColonia());
+            }
+
+            dto.setTelefonos(telefonoBO.obtenerTelefonosPorIdCliente(idUsuario));
+            
+            return dto;
+            
+        } catch (PersistenciaException ex) {
+            throw new NegocioException("Error al cargar el perfil: " + ex.getMessage());
+        }
+    }
+    
 }
 
 

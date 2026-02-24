@@ -6,6 +6,7 @@ package frames;
 
 import javax.swing.*;
 import java.awt.*;
+import negocio.DTOs.UsuarioDTO;
 
 /**
  *
@@ -22,7 +23,10 @@ public class FrmMenuUsuario extends JFrame {
     private JButton BtnMisTelefonos;
     private JButton BtnCerrarSesion;
 
-    public FrmMenuUsuario() {
+    private UsuarioDTO sesionActual;
+
+    public FrmMenuUsuario(UsuarioDTO sesionActual) {
+        this.sesionActual = sesionActual;
 
         setTitle("Menú - Maye´s Pizzas");
         setSize(500, 550);
@@ -101,17 +105,17 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnMisPedidos.addActionListener(e -> {
-            new FrmMisPedidos();
+            // new FrmMisPedidos(); cambie esto ahorita se corrige
             dispose();
         });
 
         BtnMiPerfil.addActionListener(e -> {
-            new FrmMiPerfil();
+            new FrmMiPerfil(sesionActual);
             dispose();
         });
 
         BtnMisTelefonos.addActionListener(e -> {
-            new FrmMisTelefonos();
+            // new FrmMisTelefonos(); cambie esto ahorita se corrige
             dispose();
         });
     }

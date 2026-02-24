@@ -98,4 +98,27 @@ public class UsuarioDAO implements IUsuarioDAO {
 
         return false;
     }
+    
+    /**
+     * 
+     * @param idUsuario
+     * @param nuevoHash
+     * @throws PersistenciaException 
+     */
+    @Override // esto es la correcion para el crud
+    public void actualizarPassword(int idUsuario, String nuevoHash) throws PersistenciaException {
+        String sql = "UPDATE Usuarios SET hashContraseña = ? WHERE idUsuario = ?";
+
+        try (Connection conn = conexionBD.crearConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, nuevoHash);
+            ps.setInt(2, idUsuario);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new PersistenciaException("Error al actualizar la contraseña en BD: " + e.getMessage());
+        }
+    }
+    
 }
