@@ -24,6 +24,7 @@ public class ClienteDTO {
     private String colonia;
     private List<TelefonoDTO> telefonos;
     private UsuarioDTO usuario;
+    private String estatus;
 
     public ClienteDTO() {
     }
@@ -116,6 +117,14 @@ public class ClienteDTO {
         this.telefonos = telefonos;
     }
 
+    public String getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(String estatus) {
+        this.estatus = estatus;
+    }
+    
     @Override
     public String toString() {
         return "ClienteDTO{" + "idCliente=" + idCliente + ", nombres=" + nombres + ", apellidoPaterno=" + apellidoPaterno + ", apellidoMaterno=" + apellidoMaterno + ", fechaNacimiento=" + fechaNacimiento + ", password=" + password + ", calle=" + calle + ", numero=" + numero + ", colonia=" + colonia + ", telefonos=" + telefonos + '}';
