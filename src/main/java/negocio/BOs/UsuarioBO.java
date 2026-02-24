@@ -4,6 +4,7 @@
  */
 package negocio.BOs;
 
+import java.util.logging.Logger;
 import negocio.DTOs.UsuarioDTO;
 import negocio.Exception.NegocioException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -19,6 +20,7 @@ import persistencia.Exception.PersistenciaException;
 public class UsuarioBO implements IUsuarioBO {
     
     private final IUsuarioDAO usuarioDAO;
+    private static final Logger LOG = Logger.getLogger(UsuarioBO.class.getName());
     
     public UsuarioBO( IUsuarioDAO usuarioDAO){
         this.usuarioDAO=usuarioDAO;
@@ -29,6 +31,10 @@ public class UsuarioBO implements IUsuarioBO {
         try {
             if (usuarioDAO.existeCorreo(dto.getCorreoElectronico())) {
                 throw new NegocioException("El correo electrónico ya está registrado");
+            }
+            if (!dto.getCorreoElectronico().matches("[a-zA-Z_0-9]{1,10}[@]{1}[a-zA-Z_0-9]{1,10}([.][c][o][m]|[.][e][d][u]|[.][m][x]|)")) {
+                LOG.warning("El correo no tiene el formato adecuado");
+                throw new NegocioException("El correo no tiene el formato adecuado");
             }
 
             String hash = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
