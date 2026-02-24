@@ -22,10 +22,16 @@ import persistencia.DAOs.UsuarioDAO;
 import persistencia.conexion.ConexionBD;
 
 /**
+ * Representa la ventana de gestión del perfil del usuario dentro del sistema.
+ * <p>
+ * Esta clase permite visualizar y modificar la información personal del
+ * usuario, incluyendo nombre completo, fecha de nacimiento, domicilio,
+ * contraseña y teléfono.
+ * </p>
+ * Pertenece a la capa de presentación.
  *
  * @author Noelia E.N.
  */
-
 public class FrmMiPerfil extends JFrame {
 
     private JPanel PnlPrincipal;
@@ -43,9 +49,9 @@ public class FrmMiPerfil extends JFrame {
     private ClienteDTO clienteActual; 
     private IClienteBO clienteBO;
     
-    /**
-     * 
-     * @param usuarioLogueado 
+     /**
+     * Constructor de la clase FrmMiPerfil. Inicializa la ventana, sus
+     * componentes, estilos, eventos y carga datos.
      */
     public FrmMiPerfil(UsuarioDTO usuarioLogueado) {
         this.sesionActual = usuarioLogueado;
@@ -55,7 +61,6 @@ public class FrmMiPerfil extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
-        // c me olvidaba inicializar los BOs que oso bruh
         ConexionBD conexion = new ConexionBD();
         IUsuarioBO usuarioBO = new UsuarioBO(new UsuarioDAO(conexion));
         ITelefonoBO telefonoBO = new TelefonoBO(new TelefonoDAO(conexion));
@@ -70,7 +75,8 @@ public class FrmMiPerfil extends JFrame {
     }
     
     /**
-     * 
+     * Inicializa y posiciona todos los componentes gráficos dentro del panel
+     * principal.
      */
     private void inicializarComponentes() {
         PnlPrincipal = new JPanel();
@@ -150,7 +156,7 @@ public class FrmMiPerfil extends JFrame {
     }
 
     /**
-     * 
+     * Aplica estilos visuales personalizados a los componentes de la ventana.
      */
     private void aplicarEstilos() {
         PnlPrincipal.setBackground(new Color(255, 248, 220));
@@ -161,7 +167,7 @@ public class FrmMiPerfil extends JFrame {
     }
     
     /**
-     * 
+     * Asocia los eventos de acción a los botones de la ventana.
      */
     private void agregarEventos() {
         BtnRegresar.addActionListener(e -> {
@@ -172,7 +178,7 @@ public class FrmMiPerfil extends JFrame {
         BtnGuardar.addActionListener(e -> {
             BtnGuardar.setEnabled(false);
             
-            try { // aqui tenia el otro problema de names
+            try { 
                 if (clienteActual.getUsuario() == null) {
                     clienteActual.setUsuario(sesionActual);
                 }
@@ -211,6 +217,10 @@ public class FrmMiPerfil extends JFrame {
             }
         });
     }
+
+    /**
+     * Carga datos en los campos del formulario.
+     */
     private void cargarDatosReales() {
         try {
             clienteActual = clienteBO.obtenerClientePorIdUsuario(sesionActual.getIdUsuario());
