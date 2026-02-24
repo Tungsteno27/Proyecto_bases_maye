@@ -115,7 +115,7 @@ public class FrmMenuUsuario extends JFrame {
      /**
      * Asocia los eventos de acción a los botones de navegación del menú.
      */
-    private void agregarEventos() {
+     private void agregarEventos() {
 
         BtnCerrarSesion.addActionListener(e -> {
             new FrmPantallaBienvenida();
@@ -128,7 +128,7 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnMisPedidos.addActionListener(e -> {
-            new FrmMisPedidos(); 
+            // new FrmMisPedidos(); cambie esto ahorita se corrige
             dispose();
         });
 
@@ -138,7 +138,7 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnMisTelefonos.addActionListener(e -> {
-            new FrmMisTelefonos(); 
+            //new FrmMisTelefonos(); cambie esto ahorita se corrige
             dispose();
         });
     }
