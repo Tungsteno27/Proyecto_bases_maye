@@ -4,7 +4,9 @@
  */
 package persistencia.DAOs;
 
+import java.util.List;
 import persistencia.Dominio.Cliente;
+import persistencia.Dominio.EstatusCliente;
 import persistencia.Exception.PersistenciaException;
 
 /**
@@ -35,5 +37,27 @@ public interface IClienteDAO {
      * @return
      * @throws PersistenciaException 
      */
-     public Cliente buscarPorId(int idCliente) throws PersistenciaException;
+    public Cliente buscarPorId(int idCliente) throws PersistenciaException;
+    
+    /**
+     * 
+     * @return
+     * @throws PersistenciaException 
+     */
+    public List<Cliente> obtenerTodosLosClientes() throws PersistenciaException;
+    
+    /**
+     * 
+     * @param idCliente
+     * @throws PersistenciaException 
+     */
+    public void darDeBajaCliente(int idCliente) throws PersistenciaException;
+    
+    /**
+     * 
+     * @param idCliente
+     * @param estatus
+     * @throws PersistenciaException 
+     */
+    public void cambiarEstatus(int idCliente, EstatusCliente estatus) throws PersistenciaException;
 }
