@@ -13,27 +13,29 @@ import negocio.Exception.NegocioException;
  * @author Tungs
  */
 public interface ITelefonoBO {
+
     /**
-     * 
+     *
      * @param dto
-     * @throws NegocioException 
+     * @throws NegocioException
      */
     public void agregarTelefono(TelefonoDTO dto) throws NegocioException;
 
     /**
      * Obtiene la lista de teléfonos de un client
+     *
      * @param idCliente
      * @return
-     * @throws NegocioException 
+     * @throws NegocioException
      */
     public List<TelefonoDTO> obtenerTelefonosPorIdCliente(int idCliente) throws NegocioException;
-    
+
     /**
      * Actualiza un teléfono existente
+     *
      * @param dto
-     * @throws NegocioException 
+     * @throws NegocioException
      */
     public void actualizarTelefono(TelefonoDTO dto) throws NegocioException;
-    
-    
+
 }
