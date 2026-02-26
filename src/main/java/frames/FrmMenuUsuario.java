@@ -123,7 +123,7 @@ public class FrmMenuUsuario extends JFrame {
         });
 
         BtnCrearPedidoProgramado.addActionListener(e -> {
-            new FrmProgramadoMenu();
+            new FrmProgramadoMenu(sesionActual); //Aquí lo que hice fue meterle el usuario en cuestión (W)
             dispose();
         });
 
