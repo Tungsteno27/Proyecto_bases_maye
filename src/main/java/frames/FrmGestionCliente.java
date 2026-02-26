@@ -43,7 +43,7 @@ public class FrmGestionCliente extends JFrame {
     // BO de Clientes
     private IClienteBO clienteBO;
 
-    public FrmGestionClientes(UsuarioDTO sesion) {
+    public FrmGestionCliente(UsuarioDTO sesion) {
         this.sesionActual = sesion;
 
         setTitle("Gestión de Clientes - Maye´s Pizzas");
@@ -191,7 +191,7 @@ public class FrmGestionCliente extends JFrame {
                             TxtTelefono.setText("");
                         }
                     } catch (NegocioException ex) {
-                         JOptionPane.showMessageDialog(FrmGestionClientes.this, "Error al cargar los detalles del cliente", "Error", JOptionPane.ERROR_MESSAGE);
+                         JOptionPane.showMessageDialog(FrmGestionCliente.this, "Error al cargar los detalles del cliente", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     
                     String estatus = modeloTabla.getValueAt(fila, 3).toString();
