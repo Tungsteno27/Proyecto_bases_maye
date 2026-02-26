@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -12,6 +13,7 @@ import negocio.BOs.IProductoBO;
 import negocio.BOs.ProductoBO;
 import negocio.DTOs.PedidoDTO;
 import negocio.DTOs.ProductoDTO;
+import negocio.DTOs.UsuarioDTO;
 import negocio.Exception.NegocioException;
 import persistencia.DAOs.ProductoDAO;
 import persistencia.conexion.ConexionBD;
@@ -157,7 +159,7 @@ public class FrmProgramadoMenu extends JFrame {
                 dispose();
             }else{
                 //Aquí el chaca pondrá sus cosas (W)
-                // new FrmMenuUsuario(); 
+                new FrmProgramadoMenu();
                 dispose();
             }      
         });
@@ -179,4 +181,3 @@ public class FrmProgramadoMenu extends JFrame {
         });
     }
 }
-
