@@ -5,6 +5,14 @@
 package frames;
 import javax.swing.*;
 import java.awt.*;
+import negocio.BOs.IUsuarioBO;
+import negocio.BOs.UsuarioBO;
+import negocio.DTOs.UsuarioDTO;
+import negocio.Exception.NegocioException;
+import persistencia.DAOs.IUsuarioDAO;
+import persistencia.DAOs.UsuarioDAO;
+import persistencia.Dominio.RolUsuario;
+import persistencia.conexion.ConexionBD;
 
 /**
  * Representa la ventana de acceso para el personal del sistemas.
