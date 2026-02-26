@@ -12,18 +12,44 @@ import java.util.List;
  * @author julian izaguirre
  */
 public class PedidoDTO {
-    
+
     private int idPedido;
     private LocalDateTime fechaCreacion;
-    private String estado; 
-    private Integer idCliente; 
+    private String estado;
+    private Integer idCliente;
     private double totalPagar;
+    private String tipo;
     private List<ProductoCarritoDTO> productos;
-    
-    /**
-     * constructor vacio
-     */
+    private UsuarioDTO usuario;
+    private String codigoCupon;
+    // folio del pedido express, null si es programado
+    private Integer folio;
+
     public PedidoDTO() {
+    }
+
+    public String getCodigoCupon() {
+        return codigoCupon;
+    }
+
+    public void setCodigoCupon(String codigoCupon) {
+        this.codigoCupon = codigoCupon;
+    }
+
+    public UsuarioDTO getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioDTO usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public int getIdPedido() {
@@ -74,8 +100,19 @@ public class PedidoDTO {
         this.productos = productos;
     }
 
+    public Integer getFolio() {
+        return folio;
+    }
+
+    public void setFolio(Integer folio) {
+        this.folio = folio;
+    }
+
     @Override
     public String toString() {
-        return "PedidoDTO{" + "idPedido=" + idPedido + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado + ", idCliente=" + idCliente + ", totalPagar=" + totalPagar + ", productos=" + productos + '}';
+        return "PedidoDTO{" + "idPedido=" + idPedido + ", fechaCreacion=" + fechaCreacion
+                + ", estado=" + estado + ", idCliente=" + idCliente
+                + ", totalPagar=" + totalPagar + ", tipo=" + tipo
+                + ", folio=" + folio + ", productos=" + productos + '}';
     }
 }

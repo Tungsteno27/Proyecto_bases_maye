@@ -14,4 +14,7 @@ import persistencia.Exception.PersistenciaException;
 public interface IPedidoProgramadoDAO {
     
     public void insertarPedidoProgramado(PedidoProgramado pedidoProg) throws PersistenciaException;
+    public void aplicarCupon(int idPedido, int idCupon) throws PersistenciaException;
+    public PedidoProgramado obtenerPorId(int idPedido) throws PersistenciaException;
+    
 }

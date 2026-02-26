@@ -15,4 +15,5 @@ public interface ICuponDAO {
     
     public Cupon obtenerCuponNombre(String nombre) throws PersistenciaException;
     public boolean validarCupon(int idCupon) throws PersistenciaException;
+    
 }

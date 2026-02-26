@@ -27,7 +27,7 @@ public class ConexionBD implements IConexionBD {
     /**
      * Contraseña asociada al usuario de la base de datos.
      */
-    private final String CONTRASENIA = "Matematicas24";
+    private final String CONTRASENIA = "itson";
 
     @Override
     public Connection crearConexion() throws SQLException {

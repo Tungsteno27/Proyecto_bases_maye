@@ -231,7 +231,6 @@ public class FrmProgramadoCarrito extends JFrame {
                             JOptionPane.INFORMATION_MESSAGE);
                     new FrmMenuUsuario(pedidoActual.getUsuario());
                 }
-                new FrmProgramadoCarrito(pedidoActual);
                 dispose();
 
             } catch (NegocioException ex) {

@@ -159,7 +159,7 @@ public class FrmProgramadoMenu extends JFrame {
                 dispose();
             }else{
                 //Aquí el chaca pondrá sus cosas (W)
-                new FrmProgramadoMenu();
+                // new FrmMenuUsuario(); 
                 dispose();
             }      
         });
