@@ -6,25 +6,22 @@ package frames;
 
 import javax.swing.*;
 import java.awt.*;
-import negocio.DTOs.UsuarioDTO;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import negocio.DTOs.UsuarioDTO;
-import negocio.DTOs.PedidoDTO;
 import negocio.BOs.IPedidoBO;
 import negocio.BOs.PedidoBO;
+import negocio.DTOs.PedidoDTO;
+import negocio.DTOs.UsuarioDTO;
 import negocio.Exception.NegocioException;
-
-import persistencia.DAOs.IPedidoDAO;
 import persistencia.DAOs.PedidoDAO;
-import persistencia.conexion.IConexionBD;
+import persistencia.DAOs.PedidoExpressDAO;
 import persistencia.conexion.ConexionBD;
 
 /**
  * Representa la ventana de consulta de pedidos del usuario dentro del sistema.
  * <p>
- * Esta clase permite visualizar los pedidos realizados por el usuario,
- * aplicando un filtro según el tipo de pedido (Programados o Express).
+ * Esta clase permite visualizar el historial completo de pedidos realizados por
+ * el usuario, con filtro por tipo (Programados o Express).
  * </p>
  * Forma parte de la capa de presentación.
  *
@@ -34,6 +31,7 @@ public class FrmMisPedidos extends JFrame {
 
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
+    private JComboBox<String> CmbFiltro;
     private JButton BtnFiltrar;
     private JTextArea TxtAreaPedidos;
     private JScrollPane ScrollPedidos;
@@ -42,44 +40,31 @@ public class FrmMisPedidos extends JFrame {
     private UsuarioDTO sesionActual;
     private IPedidoBO pedidoBO;
 
-    /**
-     * Constructor de la clase FrmMisPedidos. Configura la ventana principal e
-     * inicializa sus componentes, estilos y eventos.
-     */
+    private static final DateTimeFormatter FORMATO_FECHA
+            = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
     public FrmMisPedidos(UsuarioDTO sesion) {
         this.sesionActual = sesion;
-
-        inicializarBOs();
-
         setTitle("Mis pedidos - Maye´s Pizzas");
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+        inicializarNegocio();
         inicializarComponentes();
         aplicarEstilos();
         agregarEventos();
-
         setVisible(true);
     }
 
-    /**
-     * Inicializa la conexion.
-     */
-    private void inicializarBOs() {
-        IConexionBD conexion = new ConexionBD();
-        IPedidoDAO pedidoDAO = new PedidoDAO(conexion);
-        pedidoBO = new PedidoBO(pedidoDAO);
+    private void inicializarNegocio() {
+        ConexionBD conexion = new ConexionBD();
+        pedidoBO = new PedidoBO(
+                new PedidoDAO(conexion),
+                new PedidoExpressDAO(conexion)
+        );
     }
 
-    /**
-     * Inicializa y posiciona todos los componentes gráficos dentro del panel
-     * principal.
-     *
-     * Incluye el área de texto para mostrar pedidos y los botones de acción.
-     */
     private void inicializarComponentes() {
-
         PnlPrincipal = new JPanel();
         PnlPrincipal.setLayout(null);
         add(PnlPrincipal);
@@ -87,15 +72,22 @@ public class FrmMisPedidos extends JFrame {
         LblTitulo = new JLabel("MIS PEDIDOS");
         LblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         LblTitulo.setBounds(150, 30, 300, 40);
+        LblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
         PnlPrincipal.add(LblTitulo);
 
-        BtnFiltrar = new JButton("Cargar pedidos");
-        BtnFiltrar.setBounds(220, 100, 160, 30);
+        CmbFiltro = new JComboBox<>();
+        CmbFiltro.addItem("Programados");
+        CmbFiltro.addItem("Express");
+        CmbFiltro.setBounds(150, 100, 200, 30);
+        PnlPrincipal.add(CmbFiltro);
+
+        BtnFiltrar = new JButton("Filtrar");
+        BtnFiltrar.setBounds(370, 100, 100, 30);
         PnlPrincipal.add(BtnFiltrar);
 
         TxtAreaPedidos = new JTextArea();
         TxtAreaPedidos.setEditable(false);
-
+        TxtAreaPedidos.setFont(new Font("Monospaced", Font.PLAIN, 13));
         ScrollPedidos = new JScrollPane(TxtAreaPedidos);
         ScrollPedidos.setBounds(80, 160, 440, 300);
         PnlPrincipal.add(ScrollPedidos);
@@ -105,26 +97,14 @@ public class FrmMisPedidos extends JFrame {
         PnlPrincipal.add(BtnRegresar);
     }
 
-     /**
-     * Aplica estilos visuales personalizados a los botones y panel principal.
-     */
     private void aplicarEstilos() {
-
         PnlPrincipal.setBackground(new Color(255, 248, 220));
-
         BtnFiltrar.setBackground(new Color(255, 140, 0));
         BtnFiltrar.setForeground(Color.WHITE);
-
         BtnRegresar.setBackground(new Color(200, 0, 0));
         BtnRegresar.setForeground(Color.WHITE);
     }
 
-    /**
-     * Define los eventos asociados a los botones de la ventana.
-     *
-     * Permite filtrar los pedidos mostrados según el tipo seleccionado y
-     * regresar al menú principal.
-     */
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
@@ -133,39 +113,79 @@ public class FrmMisPedidos extends JFrame {
         });
 
         BtnFiltrar.addActionListener(e -> {
-
-            try {
-
-                TxtAreaPedidos.setText("");
-
-                List<PedidoDTO> pedidos
-                        = pedidoBO.consultarPedidosProgramadosPorCliente(
-                                sesionActual.getIdUsuario()
-                        );
-
-                if (pedidos.isEmpty()) {
-                    TxtAreaPedidos.append("No tienes pedidos programados.\n");
-                    return;
-                }
-
-                for (PedidoDTO p : pedidos) {
-
-                    TxtAreaPedidos.append(
-                            "Pedido #" + p.getIdPedido()
-                            + "\nFecha: " + p.getFechaCreacion()
-                            + "\nEstado: " + p.getEstado()
-                            + "\nTotal: $" + p.getTotalPagar()
-                    );
-                }
-
-            } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        ex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+            String filtro = (String) CmbFiltro.getSelectedItem();
+            TxtAreaPedidos.setText("");
+            if ("Programados".equals(filtro)) {
+                mostrarPedidosProgramados();
+            } else {
+                TxtAreaPedidos.append("Los pedidos Express no están vinculados a tu cuenta.\n\n");
+                TxtAreaPedidos.append("Para consultar un pedido Express usa el folio y PIN\n");
+                TxtAreaPedidos.append("que recibiste al momento de la compra.");
             }
         });
+    }
+
+    // =========================================================================
+    // MÉTODOS AUXILIARES
+    // =========================================================================
+    /**
+     * Consulta el historial completo de pedidos programados del cliente
+     * (activos, entregados y cancelados) y los muestra en el área de texto.
+     */
+    private void mostrarPedidosProgramados() {
+        try {
+            List<PedidoDTO> pedidos = pedidoBO.consultarPedidosProgramadosPorCliente(
+                    sesionActual.getIdUsuario()
+            );
+
+            if (pedidos == null || pedidos.isEmpty()) {
+                TxtAreaPedidos.append("No tienes pedidos programados registrados.");
+                return;
+            }
+
+            for (PedidoDTO p : pedidos) {
+                String fecha = p.getFechaCreacion() != null
+                        ? p.getFechaCreacion().format(FORMATO_FECHA)
+                        : "Sin fecha";
+
+                TxtAreaPedidos.append("─────────────────────────────────────\n");
+                TxtAreaPedidos.append("Pedido #" + p.getIdPedido() + "\n");
+                TxtAreaPedidos.append("Fecha:  " + fecha + "\n");
+                TxtAreaPedidos.append("Estado: " + formatearEstado(p.getEstado()) + "\n");
+                TxtAreaPedidos.append("Total:  $" + String.format("%.2f", p.getTotalPagar()) + "\n");
+            }
+            TxtAreaPedidos.append("─────────────────────────────────────\n");
+            TxtAreaPedidos.append("Total de pedidos: " + pedidos.size() + "\n");
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al cargar tus pedidos: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Convierte el nombre del enum a un texto legible para el usuario.
+     */
+    private String formatearEstado(String estado) {
+        if (estado == null) {
+            return "-";
+        }
+        switch (estado) {
+            case "PENDIENTE":
+                return "Pendiente";
+            case "EN_PREPARACION":
+                return "En Preparación";
+            case "LISTO":
+                return "Listo para recoger";
+            case "ENTREGADO":
+                return "Entregado ✓";
+            case "CANCELADO":
+                return "Cancelado";
+            case "NO_RECLAMADO":
+                return "No Reclamado";
+            default:
+                return estado;
+        }
     }
 }
