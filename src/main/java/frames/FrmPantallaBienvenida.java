@@ -29,10 +29,7 @@ public class FrmPantallaBienvenida extends JFrame {
     private JButton BtnAccesoPersonal;
     private JButton BtnSalir;
     
-    /**
-     * Constructor de la clase FrmPantallaBienvenida. Configura la ventana
-     * principal e inicializa sus componentes, estilos y eventos.
-     */
+    
     public FrmPantallaBienvenida() {
 
         // Configuración básica del frame
@@ -48,11 +45,6 @@ public class FrmPantallaBienvenida extends JFrame {
         setVisible(true);
     }
 
-    
-    /**
-     * Inicializa y posiciona los componentes gráficos dentro del panel
-     * principal.
-     */
     private void inicializarComponentes() {
 
         // Panel principal
@@ -89,8 +81,7 @@ public class FrmPantallaBienvenida extends JFrame {
     }
 
     /**
-     * Aplica estilos visuales personalizados a los botones y al panel
-     * principal.
+     * Método para ponerle color a los componentes
      */
     private void aplicarEstilos() {
 
@@ -115,10 +106,6 @@ public class FrmPantallaBienvenida extends JFrame {
         BtnSalir.setForeground(Color.WHITE);
     }
 
-    /**
-     * Define los eventos asociados a cada botón, permitiendo la navegación
-     * entre ventanas.
-     */
     private void agregarEventos() {
 
         BtnSalir.addActionListener(e -> System.exit(0));
@@ -139,15 +126,12 @@ public class FrmPantallaBienvenida extends JFrame {
         });
         
         BtnPedidoExpress.addActionListener(e -> {
-            new FrmPedidoExpress();
+            new FrmProgramadoMenu();
             dispose();
         });
         
     }
 
-    /**
-     * Método principal que ejecuta la aplicación.
-     */
     public static void main(String[] args) {
         new FrmPantallaBienvenida();
     }
