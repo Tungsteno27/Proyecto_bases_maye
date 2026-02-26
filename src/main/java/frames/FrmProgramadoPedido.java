@@ -16,9 +16,7 @@ import negocio.DTOs.ProductoDTO;
  */
 public class FrmProgramadoPedido extends JFrame {
 
-    private JLabel LblTitulo, LblProducto, LblTamano, LblCantidad, LblNotas, LblResumen;
-    private JRadioButton RbChica, RbMediana, RbGrande;
-    private ButtonGroup GrupoTamano;
+    private JLabel LblTitulo, LblProducto,LblCantidad, LblNotas, LblResumen;
     private JSpinner SpnCantidad;
     private JTextArea TxtNotas, TxtResumen;
     private JButton BtnAgregar, BtnRegresar, BtnVerCarrito;
@@ -31,9 +29,12 @@ public class FrmProgramadoPedido extends JFrame {
 
         this.productoSeleccionado = producto;
         this.pedidoActual = pedido;
-
+        if(pedidoActual.getTipo().equals("EXPRESS")){
+            setTitle("Personalizar Pedido Express");
+        }else{
         setTitle("Personalizar Pedido Programado");
-        setSize(600, 650);
+        }
+        setSize(600, 520);
         setLayout(null);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -53,88 +54,61 @@ public class FrmProgramadoPedido extends JFrame {
         LblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         add(LblTitulo);
 
-        LblProducto = new JLabel("Producto: " + productoSeleccionado.getNombre());
-        LblProducto.setBounds(50, 70, 400, 25);
+        LblProducto = new JLabel("Producto: " + productoSeleccionado.getNombre()
+                + " | Tamaño: " + productoSeleccionado.getTamanio()
+                + " | Precio: $" + productoSeleccionado.getPrecio());
+        LblProducto.setBounds(50, 70, 500, 25);
         add(LblProducto);
 
-        LblTamano = new JLabel("Tamaño:");
-        LblTamano.setBounds(50, 110, 100, 25);
-        add(LblTamano);
-
-        RbChica = new JRadioButton("Chica (+$0)");
-        RbChica.setBounds(50, 140, 150, 25);
-
-        RbMediana = new JRadioButton("Mediana (+$30)");
-        RbMediana.setBounds(50, 170, 150, 25);
-
-        RbGrande = new JRadioButton("Grande (+$60)");
-        RbGrande.setBounds(50, 200, 150, 25);
-
-        GrupoTamano = new ButtonGroup();
-        GrupoTamano.add(RbChica);
-        GrupoTamano.add(RbMediana);
-        GrupoTamano.add(RbGrande);
-
-        RbChica.setSelected(true);
-
-        add(RbChica);
-        add(RbMediana);
-        add(RbGrande);
-
         LblCantidad = new JLabel("Cantidad:");
-        LblCantidad.setBounds(50, 250, 100, 25);
+        LblCantidad.setBounds(50, 120, 100, 25);
         add(LblCantidad);
 
         SpnCantidad = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
-        SpnCantidad.setBounds(130, 250, 60, 25);
+        SpnCantidad.setBounds(130, 120, 60, 25);
         add(SpnCantidad);
 
-        LblNotas = new JLabel("Notas adicionales:");
-        LblNotas.setBounds(50, 300, 150, 25);
+        LblNotas = new JLabel("Notas adicionales (opcional):");
+        LblNotas.setBounds(50, 170, 250, 25);
         add(LblNotas);
 
         TxtNotas = new JTextArea();
         TxtNotas.setLineWrap(true);
         JScrollPane scrollNotas = new JScrollPane(TxtNotas);
-        scrollNotas.setBounds(50, 330, 480, 80);
+        scrollNotas.setBounds(50, 200, 480, 80);
         add(scrollNotas);
 
         LblResumen = new JLabel("Resumen:");
-        LblResumen.setBounds(50, 430, 100, 25);
+        LblResumen.setBounds(50, 300, 100, 25);
         add(LblResumen);
 
         TxtResumen = new JTextArea();
         TxtResumen.setEditable(false);
         JScrollPane scrollResumen = new JScrollPane(TxtResumen);
-        scrollResumen.setBounds(50, 460, 480, 80);
+        scrollResumen.setBounds(50, 330, 480, 80);
         add(scrollResumen);
 
         BtnAgregar = new JButton("Agregar al carrito");
-        BtnAgregar.setBounds(60, 550, 200, 40);
+        BtnAgregar.setBounds(60, 430, 180, 40);
         BtnAgregar.setBackground(new Color(255, 140, 0));
         BtnAgregar.setForeground(Color.WHITE);
         add(BtnAgregar);
 
-        BtnRegresar = new JButton("Regresar al Menú");
-        BtnRegresar.setBounds(330, 550, 200, 40);
-        BtnRegresar.setBackground(new Color(200, 0, 0));
-        BtnRegresar.setForeground(Color.WHITE);
-        add(BtnRegresar);
-
         BtnVerCarrito = new JButton("Ver carrito");
-        BtnVerCarrito.setBounds(180, 600, 200, 40);
+        BtnVerCarrito.setBounds(260, 430, 150, 40);
         BtnVerCarrito.setBackground(new Color(0, 128, 0));
         BtnVerCarrito.setForeground(Color.WHITE);
         add(BtnVerCarrito);
 
+        BtnRegresar = new JButton("Regresar al Menú");
+        BtnRegresar.setBounds(430, 430, 150, 40);
+        BtnRegresar.setBackground(new Color(200, 0, 0));
+        BtnRegresar.setForeground(Color.WHITE);
+        add(BtnRegresar);
     }
 
     private void agregarEventos() {
 
-        RbChica.addActionListener(e -> actualizarResumen());
-        RbMediana.addActionListener(e -> actualizarResumen());
-        RbGrande.addActionListener(e -> actualizarResumen());
-        SpnCantidad.addChangeListener(e -> actualizarResumen());
 
         BtnAgregar.addActionListener(e -> {
             
@@ -143,10 +117,12 @@ public class FrmProgramadoPedido extends JFrame {
             item.setProducto(productoSeleccionado);
             item.setCantidad((int) SpnCantidad.getValue());
             
-            String tamañoElegido = RbGrande.isSelected() ? "Grande" : (RbMediana.isSelected() ? "Mediana" : "Chica");
-            String notaFinal = "Tamaño: " + tamañoElegido + ". " + TxtNotas.getText().trim();
-            item.setNotas(notaFinal);
-            
+            String notas = TxtNotas.getText().trim();
+            if(notas.isEmpty()){
+                item.setNotas(null);
+            }else{
+                item.setNotas(notas);
+            }
             pedidoActual.getProductos().add(item);
 
             JOptionPane.showMessageDialog(this,
@@ -154,6 +130,8 @@ public class FrmProgramadoPedido extends JFrame {
                     "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
             TxtNotas.setText(""); // Limpiamos las notas por si quiere otro
+            SpnCantidad.setValue(1);
+            actualizarResumen(); //AQUÍ PRÁCTICAMENTE NO HICE NADA DE NADA (W)
         });
 
         BtnRegresar.addActionListener(e -> {
@@ -165,31 +143,29 @@ public class FrmProgramadoPedido extends JFrame {
             new FrmProgramadoCarrito(pedidoActual); 
             dispose();
         });
+        
+        /**
+         * Método listener que se ejecuta cada que el spnCantidad cambia su valor
+         */
+        SpnCantidad.addChangeListener(e -> {
+            actualizarResumen();
+        });
 
     }
 
     private void actualizarResumen() {
 
         int cantidad = (int) SpnCantidad.getValue();
-        double extra = 0;
-        String tamano = "Chica";
-
-        if (RbMediana.isSelected()) {
-            extra = 30;
-            tamano = "Mediana";
-        } else if (RbGrande.isSelected()) {
-            extra = 60;
-            tamano = "Grande";
-        }
-
-        // Sacamos el precio base desde la base de datos (del DTO)
-        double totalItem = (productoSeleccionado.getPrecio() + extra) * cantidad;
+        double totalItem = productoSeleccionado.getPrecio() * cantidad;
 
         TxtResumen.setText(
                 "Producto: " + productoSeleccionado.getNombre()
-                + "\nTamaño: " + tamano
+                + "\nTamaño: " + productoSeleccionado.getTamanio()
+                + "\nPrecio unitario: $" + productoSeleccionado.getPrecio()
                 + "\nCantidad: " + cantidad
                 + "\nTotal: $" + totalItem
         );
     }
+    
+    
 }
