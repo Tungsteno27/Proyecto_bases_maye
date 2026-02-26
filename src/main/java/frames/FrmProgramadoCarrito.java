@@ -1,3 +1,24 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+package frames;
+
+import javax.swing.*;
+import java.awt.*;
+import negocio.BOs.CuponBO;
+import negocio.BOs.ICuponBO;
+import negocio.BOs.IPedidoBO;
+import negocio.BOs.PedidoBO;
+import negocio.DTOs.CuponDTO;
+import negocio.DTOs.PedidoDTO;
+import negocio.DTOs.ProductoCarritoDTO;
+import negocio.Exception.NegocioException;
+import persistencia.DAOs.CuponDAO;
+import persistencia.DAOs.PedidoDAO;
+import persistencia.conexion.ConexionBD;
+
 public class FrmProgramadoCarrito extends JFrame {
 
     private JTextArea TxtResumen;
