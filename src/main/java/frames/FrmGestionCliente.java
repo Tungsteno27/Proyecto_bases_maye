@@ -21,7 +21,7 @@ import persistencia.conexion.ConexionBD;
  * Pantalla para el CRUD de Clientes
  * @author julian izaguirre
  */
-public class FrmGestionClientes extends JFrame {
+public class FrmGestionCliente extends JFrame {
     
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
