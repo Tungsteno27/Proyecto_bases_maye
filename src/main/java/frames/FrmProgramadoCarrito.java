@@ -10,13 +10,21 @@ import java.awt.*;
 import negocio.BOs.CuponBO;
 import negocio.BOs.ICuponBO;
 import negocio.BOs.IPedidoBO;
+import negocio.BOs.IPedidoExpressBO;
+import negocio.BOs.IPedidoProgramadoBO;
 import negocio.BOs.PedidoBO;
+import negocio.BOs.PedidoExpressBO;
+import negocio.BOs.PedidoProgramadoBO;
 import negocio.DTOs.CuponDTO;
 import negocio.DTOs.PedidoDTO;
+import negocio.DTOs.PedidoExpressDTO;
 import negocio.DTOs.ProductoCarritoDTO;
 import negocio.Exception.NegocioException;
 import persistencia.DAOs.CuponDAO;
 import persistencia.DAOs.PedidoDAO;
+import persistencia.DAOs.PedidoExpressDAO;
+import persistencia.DAOs.PedidoProductoDAO;
+import persistencia.DAOs.PedidoProgramadoDAO;
 import persistencia.conexion.ConexionBD;
 
 public class FrmProgramadoCarrito extends JFrame {
@@ -223,6 +231,7 @@ public class FrmProgramadoCarrito extends JFrame {
                             JOptionPane.INFORMATION_MESSAGE);
                     new FrmMenuUsuario(pedidoActual.getUsuario());
                 }
+                new FrmProgramadoCarrito(pedidoActual);
                 dispose();
 
             } catch (NegocioException ex) {
