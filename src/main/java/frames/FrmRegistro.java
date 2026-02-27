@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -29,9 +29,11 @@ import persistencia.DAOs.TelefonoDAO;
 import persistencia.DAOs.UsuarioDAO;
 import persistencia.Dominio.RolUsuario;
 import persistencia.conexion.ConexionBD;
-import persistencia.conexion.IConexionBD;
 
 /**
+ * pantalla que gestiona el registro de nuevos usuarios en el sistema
+ * recolecta datos personales de contacto y credenciales de acceso
+ * validando la integridad de la informacion antes de enviarla a la capa logica
  *
  * @author Dell PC
  */
@@ -70,8 +72,13 @@ public class FrmRegistro extends JFrame {
     private JLabel LblCorreo;
     private JTextField TxtCorreo;
 
+    /**
+     * constructor principal de la ventana de registro
+     * define las dimensiones y comportamiento de la ventana y llama a los
+     * metodos encargados de dibujar la interfaz grafica y asignar eventos
+     */
     public FrmRegistro() {
-        setTitle("Registro - Maye´s Pizzas");
+        setTitle("Registro - Mayes Pizzas");
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -84,6 +91,11 @@ public class FrmRegistro extends JFrame {
 
     }
 
+    /**
+     * crea y posiciona todos los campos de texto etiquetas y botones
+     * utilizando un diseno absoluto dentro de un panel con barra de desplazamiento
+     * para asegurar que todos los datos solicitados sean visibles
+     */
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
@@ -91,7 +103,7 @@ public class FrmRegistro extends JFrame {
         PnlPrincipal.setPreferredSize(new Dimension(580, 750));
         PnlPrincipal.setBackground(new Color(255, 248, 220));
 
-        // Scroll
+        // barra de desplazamiento vertical
         JScrollPane scroll = new JScrollPane(PnlPrincipal);
         scroll.setBounds(0, 0, 600, 600);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -102,15 +114,15 @@ public class FrmRegistro extends JFrame {
         LblTitulo.setBounds(100, 30, 350, 40);
         PnlPrincipal.add(LblTitulo);
 
-        // Correo electrónico - PRIMERO
-        LblCorreo = new JLabel("Correo electrónico *");
+        // correo electronico
+        LblCorreo = new JLabel("Correo electronico *");
         LblCorreo.setBounds(100, 80, 300, 25);
         PnlPrincipal.add(LblCorreo);
         TxtCorreo = new JTextField();
         TxtCorreo.setBounds(100, 105, 350, 30);
         PnlPrincipal.add(TxtCorreo);
 
-        // Nombres - SEGUNDO
+        // nombres
         LblNombres = new JLabel("Nombres *");
         LblNombres.setBounds(100, 145, 300, 25);
         PnlPrincipal.add(LblNombres);
@@ -118,7 +130,7 @@ public class FrmRegistro extends JFrame {
         TxtNombres.setBounds(100, 170, 350, 30);
         PnlPrincipal.add(TxtNombres);
 
-        // Apellido paterno
+        // apellido paterno
         LblApellidoPaterno = new JLabel("Apellido paterno *");
         LblApellidoPaterno.setBounds(100, 210, 300, 25);
         PnlPrincipal.add(LblApellidoPaterno);
@@ -126,7 +138,7 @@ public class FrmRegistro extends JFrame {
         TxtApellidoPaterno.setBounds(100, 235, 350, 30);
         PnlPrincipal.add(TxtApellidoPaterno);
 
-        // Apellido materno
+        // apellido materno
         LblApellidoMaterno = new JLabel("Apellido materno");
         LblApellidoMaterno.setBounds(100, 275, 300, 25);
         PnlPrincipal.add(LblApellidoMaterno);
@@ -134,7 +146,7 @@ public class FrmRegistro extends JFrame {
         TxtApellidoMaterno.setBounds(100, 300, 350, 30);
         PnlPrincipal.add(TxtApellidoMaterno);
 
-        // Fecha nacimiento
+        // fecha de nacimiento
         LblFechaNacimiento = new JLabel("Fecha de nacimiento * (dd/MM/yyyy)");
         LblFechaNacimiento.setBounds(100, 340, 300, 25);
         PnlPrincipal.add(LblFechaNacimiento);
@@ -142,7 +154,7 @@ public class FrmRegistro extends JFrame {
         TxtFechaNacimiento.setBounds(100, 365, 350, 30);
         PnlPrincipal.add(TxtFechaNacimiento);
 
-        // Calle, Número y Colonia
+        // direccion dividida en calle numero y colonia
         LblCalle = new JLabel("Calle");
         LblCalle.setBounds(100, 405, 150, 25);
         PnlPrincipal.add(LblCalle);
@@ -150,7 +162,7 @@ public class FrmRegistro extends JFrame {
         TxtCalle.setBounds(100, 430, 160, 30);
         PnlPrincipal.add(TxtCalle);
 
-        LblNumero = new JLabel("Número");
+        LblNumero = new JLabel("Numero");
         LblNumero.setBounds(270, 405, 80, 25);
         PnlPrincipal.add(LblNumero);
         TxtNumero = new JTextField();
@@ -164,31 +176,31 @@ public class FrmRegistro extends JFrame {
         TxtColonia.setBounds(360, 430, 90, 30);
         PnlPrincipal.add(TxtColonia);
 
-        // Contraseña
-        LblContrasena = new JLabel("Contraseña *");
+        // contrasena principal
+        LblContrasena = new JLabel("Contrasena *");
         LblContrasena.setBounds(100, 470, 300, 25);
         PnlPrincipal.add(LblContrasena);
         PswContrasena = new JPasswordField();
         PswContrasena.setBounds(100, 495, 350, 30);
         PnlPrincipal.add(PswContrasena);
 
-        // Confirmar contraseña
-        LblConfirmarContrasena = new JLabel("Confirmar contraseña *");
+        // confirmacion de contrasena
+        LblConfirmarContrasena = new JLabel("Confirmar contrasena *");
         LblConfirmarContrasena.setBounds(100, 535, 300, 25);
         PnlPrincipal.add(LblConfirmarContrasena);
         PswConfirmarContrasena = new JPasswordField();
         PswConfirmarContrasena.setBounds(100, 560, 350, 30);
         PnlPrincipal.add(PswConfirmarContrasena);
 
-        // Teléfono
-        LblTelefono = new JLabel("Teléfono *");
+        // telefono de contacto
+        LblTelefono = new JLabel("Telefono *");
         LblTelefono.setBounds(100, 600, 300, 25);
         PnlPrincipal.add(LblTelefono);
         TxtTelefono = new JTextField();
         TxtTelefono.setBounds(100, 625, 350, 30);
         PnlPrincipal.add(TxtTelefono);
 
-        // Botones
+        // botones de accion final
         BtnGuardar = new JButton("Guardar");
         BtnGuardar.setBounds(120, 675, 140, 35);
         PnlPrincipal.add(BtnGuardar);
@@ -199,6 +211,9 @@ public class FrmRegistro extends JFrame {
 
     }
 
+    /**
+     * aplica la paleta de colores institucional a los elementos clave
+     */
     private void aplicarEstilos() {
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
@@ -210,8 +225,14 @@ public class FrmRegistro extends JFrame {
         BtnRegresar.setForeground(Color.WHITE);
     }
 
+    /**
+     * agrupa los eventos de los botones maneja el proceso completo de registro
+     * desde la recoleccion visual la validacion de campos vacios y formatos
+     * hasta la instanciacion y envio de dtos a la capa de negocio
+     */
     private void agregarEventos() {
 
+        // navegacion de retroceso
         BtnRegresar.addActionListener(e -> {
             new FrmPantallaBienvenida();
             dispose();
@@ -230,49 +251,55 @@ public class FrmRegistro extends JFrame {
             String contrasena = new String(PswContrasena.getPassword());
             String confirmar = new String(PswConfirmarContrasena.getPassword());
             String correo = TxtCorreo.getText().trim();
-            //Checa los campos obligatorios (que no estén en blanco)
+            
+            // validacion para asegurar que ningun campo obligatorio quede en blanco
             if (nombres.isEmpty() || apellidoPaterno.isEmpty() || fechaNacimiento.isEmpty()
                     || telefono.isEmpty() || contrasena.isEmpty() || confirmar.isEmpty() || correo.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                        "Debe completar todos los campos obligatorios",
-                        "Error",
+                        "debe completar todos los campos obligatorios",
+                        "error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            //Valida que las contraseñas sean iguales
+            
+            // validacion de coincidencia de seguridad
             if (!contrasena.equals(confirmar)) {
                 JOptionPane.showMessageDialog(this,
-                        "Las contraseñas no coinciden",
-                        "Error",
+                        "las contrasenas no coinciden",
+                        "error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            //Parseo de fecha
+            
+            // conversion de formato de texto a objeto localdate para la base de datos
             LocalDate fechaParseada;
             try {
                 fechaParseada = LocalDate.parse(fechaNacimiento, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
-                        "Formato de fecha incorrecto, use dd/MM/yyyy",
-                        "Error",
+                        "formato de fecha incorrecto use dd/MM/yyyy",
+                        "error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            //Aquí comienza el proceso de inserción en la BD
+            // construccion del objeto usuario para credenciales
             UsuarioDTO usuarioDTO = new UsuarioDTO();
             usuarioDTO.setCorreoElectronico(correo);
             usuarioDTO.setPassword(contrasena);
             usuarioDTO.setRol(RolUsuario.CLIENTE);
 
+            // construccion del objeto telefono para metadatos de contacto
             TelefonoDTO telDTO = new TelefonoDTO();
             telDTO.setNumero(telefono);
-            telDTO.setEtiqueta("Casa");
+            telDTO.setEtiqueta("casa");
 
+            // ensamblaje final del objeto cliente maestro
             ClienteDTO dto = new ClienteDTO();
             dto.setNombres(nombres);
             dto.setApellidoPaterno(apellidoPaterno);
-            //Ternario que dice que se hace si es verdadero o falso (sacado del video de la profe maye, será útil más adelante)
+            
+            // se utiliza operador ternario para manejar campos opcionales asignando null si estan vacios
             dto.setApellidoMaterno(apellidoMaterno.isEmpty() ? null : apellidoMaterno);
             dto.setFechaNacimiento(fechaParseada);
             dto.setCalle(calle.isEmpty() ? null : calle);
@@ -280,7 +307,8 @@ public class FrmRegistro extends JFrame {
             dto.setColonia(colonia.isEmpty() ? null : colonia);
             dto.setUsuario(usuarioDTO);
             dto.setTelefonos(Arrays.asList(telDTO));
-            //CREO que aquí deberíamos usar la fábrica hay mucho texto
+            
+            // inyeccion de dependencias manual y ejecucion del registro en la capa de negocio
             try {
                 ConexionBD conexionBD = new ConexionBD();
                 IUsuarioDAO usuarioDAO = new UsuarioDAO(conexionBD);
@@ -294,8 +322,8 @@ public class FrmRegistro extends JFrame {
                 clienteBO.registrarCliente(dto);
 
                 JOptionPane.showMessageDialog(this,
-                        "Usuario registrado correctamente.\nAhora debe iniciar sesión.",
-                        "Registro exitoso",
+                        "usuario registrado correctamente\nahora debe iniciar sesion",
+                        "registro exitoso",
                         JOptionPane.INFORMATION_MESSAGE);
 
                 new FrmLogin();
@@ -304,7 +332,7 @@ public class FrmRegistro extends JFrame {
             } catch (NegocioException ex) {
                 JOptionPane.showMessageDialog(this,
                         ex.getMessage(),
-                        "Error",
+                        "error",
                         JOptionPane.ERROR_MESSAGE);
             }
         });
