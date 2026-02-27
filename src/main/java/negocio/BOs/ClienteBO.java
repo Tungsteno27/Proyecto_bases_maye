@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package negocio.BOs;
 
@@ -18,6 +18,10 @@ import persistencia.Dominio.TelefonoCliente;
 import persistencia.Exception.PersistenciaException;
 
 /**
+ * clase que implementa la logica de negocio para los clientes
+ * se encarga de procesar las reglas y validaciones antes de enviar
+ * o solicitar informacion a la capa de persistencia mediante los daos
+ * actua como intermediario entre la vista y la base de datos
  *
  * @author julian izaguirre
  */
@@ -28,6 +32,15 @@ public class ClienteBO implements IClienteBO{
     private ITelefonoBO telefonoBO;
     private IDireccionDAO direccionDAO;
 
+    /**
+     * constructor de la clase clientebo
+     * inicializa los componentes necesarios para interactuar con las tablas
+     * relacionadas al cliente como direccion telefono y usuario
+     * * @param clienteDAO objeto para acceder a datos de clientes
+     * @param direccionDAO objeto para acceder a datos de direcciones
+     * @param usuarioBO objeto para logica de usuarios
+     * @param telefonoBO objeto para logica de telefonos
+     */
     public ClienteBO(IClienteDAO clienteDAO, IDireccionDAO direccionDAO, IUsuarioBO usuarioBO, ITelefonoBO telefonoBO) {
         this.clienteDAO = clienteDAO;
         this.direccionDAO = direccionDAO;
@@ -35,13 +48,20 @@ public class ClienteBO implements IClienteBO{
         this.telefonoBO = telefonoBO;
     }
     
+    /**
+     * registra un nuevo cliente en el sistema coordinando la creacion
+     * de su usuario direccion datos personales y telefonos en orden
+     * * @param dto el objeto con los datos capturados en pantalla
+     * @return el mismo dto actualizado con el id generado
+     * @throws NegocioException si ocurre un error en la capa de persistencia
+     */
     @Override
     public ClienteDTO registrarCliente(ClienteDTO dto) throws NegocioException {
         try {
-                //Registra el usuario primero
+                // registra el usuario primero para obtener el id principal
                 int idUsuario = usuarioBO.registrarUsuario(dto.getUsuario());
 
-                //Luego si tiene dirección la guarda
+                // verifica si existen datos de direccion y los guarda
                 DireccionCliente direccion = null;
                 if (dto.getCalle() != null && !dto.getCalle().isBlank()) {
                     direccion = new DireccionCliente();
@@ -52,44 +72,49 @@ public class ClienteBO implements IClienteBO{
                     direccion.setIdDireccion(idDireccion);
                 }
 
-                //Se crea un cliente ahora que ya se creo el usuario y la dirección
+                // instancia un objeto de dominio cliente con las llaves relacionadas
                 Cliente cliente = new Cliente();
                 cliente.setIdCliente(idUsuario);
                 cliente.setNombres(dto.getNombres());
                 cliente.setApellidoPaterno(dto.getApellidoPaterno());
                 cliente.setApellidoMaterno(dto.getApellidoMaterno());
                 cliente.setFechaNacimiento(dto.getFechaNacimiento());
-                cliente.setEstatus(EstatusCliente.ACTIVO); //EL cliente empieza siendo activo
+                cliente.setEstatus(EstatusCliente.ACTIVO); // por defecto todo registro nuevo es activo
                 cliente.setDireccion(direccion);
                 clienteDAO.insertarCliente(cliente);
 
-                //Este for sirve para recorrer la lista de telefonos del dto, la parte del idUsuario es para enchufar correctamente la llave foránea
+                // vincula cada telefono de la lista con el id del cliente recien creado
                 for (TelefonoDTO telDTO : dto.getTelefonos()) {
                     telDTO.setIdCliente(idUsuario);
                     telefonoBO.agregarTelefono(telDTO);
                 }
 
-                //Lo mismo que lo de arriba, todos usan el mismo ID cumpliendo con las propiedaded de la especialización y llaves foráneas
+                // actualiza el dto original con el id final para retornarlo
                 dto.setIdCliente(idUsuario);
-                //regresa el objeto DTO
                 return dto;
 
         } catch (PersistenciaException e) {
-            throw new NegocioException("Error al registrar cliente: " + e.getMessage());
+            throw new NegocioException("error al registrar cliente: " + e.getMessage());
         }
     }
     
-    //JULIÁN QUIZÁS QUIERAS VER ESTO TAL VEZ ESTÁ MAL AHORA
-    // segun yo ya lo arregle con este cambio del down
+    /**
+     * actualiza la informacion personal de un cliente existente
+     * maneja la limpieza de cadenas numericas para la direccion y delega
+     * la actualizacion de contrasenas o telefonos a sus respectivos bo
+     * * @param clienteDTO los nuevos datos que reemplazaran a los actuales
+     * @return el dto modificado si la operacion fue exitosa
+     * @throws NegocioException si el cliente no existe o hay error de guardado
+     */
     @Override
     public ClienteDTO actualizarInformacion(ClienteDTO clienteDTO) throws NegocioException {
         try {
             Cliente clienteOriginal = clienteDAO.buscarPorId(clienteDTO.getIdCliente());
             if (clienteOriginal == null) {
-                throw new NegocioException("No se encontro el cliente a actualizar.");
+                throw new NegocioException("no se encontro el cliente a actualizar");
             }
 
-            // Mapeo de DTO a Dominio 
+            // conversion de datos del dto hacia la entidad de dominio
             Cliente cliente = new Cliente();
             cliente.setIdCliente(clienteDTO.getIdCliente());
             cliente.setNombres(clienteDTO.getNombres());
@@ -101,6 +126,7 @@ public class ClienteBO implements IClienteBO{
             direccion.setCalle(clienteDTO.getCalle());
             direccion.setColonia(clienteDTO.getColonia());
             
+            // limpieza preventiva para asegurar que el numero de casa solo contenga digitos
             if (clienteDTO.getNumero() != null && !clienteDTO.getNumero().isEmpty()) {
                 String numeroLimpio = clienteDTO.getNumero().replaceAll("\\D+", "");
                 if (!numeroLimpio.isEmpty()) {
@@ -114,6 +140,7 @@ public class ClienteBO implements IClienteBO{
                 }
             }
             
+            // verifica si es actualizacion de direccion existente o creacion de una nueva
             if (clienteOriginal.getDireccion() != null) {
                 direccion.setIdDireccion(clienteOriginal.getDireccion().getIdDireccion());
                 direccionDAO.actualizarDireccion(direccion); 
@@ -125,6 +152,7 @@ public class ClienteBO implements IClienteBO{
 
             boolean actualizado = clienteDAO.actualizarCliente(cliente);
             
+            // gestiona la edicion o agregacion de multiples telefonos
             if (clienteDTO.getTelefonos() != null) {
                 for (TelefonoDTO telDTO : clienteDTO.getTelefonos()) {
                     if (telDTO.getIdTelefono() != 0) {
@@ -136,6 +164,7 @@ public class ClienteBO implements IClienteBO{
                 }
             }
             
+            // delega el cambio de seguridad si se envio una nueva contrasena
             if (clienteDTO.getUsuario() != null && clienteDTO.getUsuario().getPassword() != null && !clienteDTO.getUsuario().getPassword().isEmpty()) {
                 usuarioBO.actualizarPassword(clienteDTO.getUsuario().getIdUsuario(), clienteDTO.getUsuario().getPassword());
             }
@@ -143,21 +172,28 @@ public class ClienteBO implements IClienteBO{
             if (actualizado) {
                 return clienteDTO;
             } else {
-                throw new NegocioException("No se encontro el cliente a actualizar en la base de datos");
+                throw new NegocioException("no se encontro el cliente a actualizar en la base de datos");
             }
             
         } catch (PersistenciaException ex) {
-            throw new NegocioException("Error al actualizar la información del cliente: " + ex.getMessage());
+            throw new NegocioException("error al actualizar la informacion del cliente: " + ex.getMessage());
         }
     }
     
+    /**
+     * recupera todos los datos de un cliente basado en su identificador
+     * empaqueta la entidad junto con su direccion y lista de telefonos en un dto
+     * * @param idUsuario el identificador unico del cliente a buscar
+     * @return un clientedto con toda la informacion cruzada
+     * @throws NegocioException si ocurre un error de consulta
+     */
     @Override
     public ClienteDTO obtenerClientePorIdUsuario(int idUsuario) throws NegocioException {
         try {
             Cliente cliente = clienteDAO.buscarPorId(idUsuario);
             
             if (cliente == null) {
-                throw new NegocioException("No se encontró la información del perfil.");
+                throw new NegocioException("no se encontro la informacion del perfil");
             }
             
             ClienteDTO dto = new ClienteDTO();
@@ -167,6 +203,7 @@ public class ClienteBO implements IClienteBO{
             dto.setApellidoMaterno(cliente.getApellidoMaterno());
             dto.setFechaNacimiento(cliente.getFechaNacimiento());
             
+            // extrae los valores de la direccion si el objeto no es nulo
             if (cliente.getDireccion() != null) {
                 dto.setCalle(cliente.getDireccion().getCalle());
                 dto.setNumero(String.valueOf(cliente.getDireccion().getNumero()));
@@ -178,14 +215,16 @@ public class ClienteBO implements IClienteBO{
             return dto;
             
         } catch (PersistenciaException ex) {
-            throw new NegocioException("Error al cargar el perfil: " + ex.getMessage());
+            throw new NegocioException("error al cargar el perfil: " + ex.getMessage());
         }
     }
     
     /**
-     * 
-     * @return
-     * @throws NegocioException 
+     * consulta la base de datos para recuperar todos los clientes registrados
+     * convierte cada entidad de dominio a un objeto dto para la capa visual
+     * extrayendo unicamente el primer telefono como dato de contacto principal
+     * * @return lista de clientes empaquetados en objetos dto
+     * @throws NegocioException si falla la peticion a la base de datos
      */
     @Override
     public List<ClienteDTO> obtenerTodosLosClientes() throws NegocioException {
@@ -204,6 +243,7 @@ public class ClienteBO implements IClienteBO{
                     dto.setEstatus(c.getEstatus().name());
                 }
                 
+                // saca solo el telefono principal para mostrarlo en tablas resumen
                 if (c.getTelefonos() != null && !c.getTelefonos().isEmpty()) {
                     List<TelefonoDTO> telefonosDTO = new ArrayList<>();
                     TelefonoDTO telDTO = new TelefonoDTO();
@@ -217,38 +257,37 @@ public class ClienteBO implements IClienteBO{
             return listaDTO;
             
         } catch (PersistenciaException ex) {
-            throw new NegocioException("Error al consultar la lista de clientes: " + ex.getMessage());
+            throw new NegocioException("error al consultar la lista de clientes: " + ex.getMessage());
         }
     }
     
     /**
-     * 
-     * @param idCliente
-     * @throws NegocioException 
+     * ejecuta una baja logica sobre un cliente en especifico
+     * * @param idCliente identificador del cliente a desactivar
+     * @throws NegocioException si falla la comunicacion con el dao
      */
     @Override
     public void darDeBajaCliente(int idCliente) throws NegocioException {
         try {
             clienteDAO.darDeBajaCliente(idCliente);
         } catch (PersistenciaException ex) {
-            throw new NegocioException("Error al dar de baja al cliente en el sistema: " + ex.getMessage());
+            throw new NegocioException("error al dar de baja al cliente en el sistema: " + ex.getMessage());
         }
     }
     
     /**
-     * 
-     * @param idCliente
-     * @param estatus
-     * @throws NegocioException 
+     * modifica el estatus operativo de un cliente determinado
+     * traduciendo la cadena de texto a un valor del enumerador correspondiente
+     * * @param idCliente identificador del cliente a modificar
+     * @param estatus texto que representa el nuevo estado activo o inactivo
+     * @throws NegocioException si el valor no es valido o falla la persistencia
      */
     @Override
     public void cambiarEstatus(int idCliente, String estatus) throws NegocioException {
         try {
             clienteDAO.cambiarEstatus(idCliente, persistencia.Dominio.EstatusCliente.valueOf(estatus.toUpperCase()));
         } catch (PersistenciaException ex) {
-            throw new NegocioException("Error al actualizar el estatus: " + ex.getMessage());
+            throw new NegocioException("error al actualizar el estatus: " + ex.getMessage());
         }
     }
 }
-
-
