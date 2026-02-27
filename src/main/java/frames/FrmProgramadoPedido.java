@@ -1,7 +1,6 @@
-
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -12,6 +11,9 @@ import negocio.DTOs.ProductoCarritoDTO;
 import negocio.DTOs.ProductoDTO;
 
 /**
+ * clase que representa la ventana de personalizacion de un producto
+ * permite al cliente seleccionar la cantidad agregar notas especiales y ver un
+ * resumen del costo antes de agregar el item a su carrito de compras
  *
  * @author Noelia E.N.
  */
@@ -22,19 +24,29 @@ public class FrmProgramadoPedido extends JFrame {
     private JTextArea TxtNotas, TxtResumen;
     private JButton BtnAgregar, BtnRegresar, BtnVerCarrito;
 
-    // cambiamos el String de la noelia por los DTOs reales
+    // dtos reales del negocio para mantener la informacion del carrito
     private ProductoDTO productoSeleccionado;
     private PedidoDTO pedidoActual;
 
+    /**
+     * constructor de la ventana de personalizacion de pedido
+     * recibe el producto que el cliente quiere y el carrito actual
+     * ajusta el titulo dependiendo de si el flujo es express o programado
+     * * @param producto el producto especifico seleccionado en el menu
+     * * @param pedido el pedido en curso con la lista de productos acumulada
+     */
     public FrmProgramadoPedido(ProductoDTO producto, PedidoDTO pedido) {
 
         this.productoSeleccionado = producto;
         this.pedidoActual = pedido;
-        if(pedidoActual.getTipo().equals("EXPRESS")){
+        
+        // cambia el titulo de la ventana segun el tipo de pedido
+        if("EXPRESS".equals(pedidoActual.getTipo())){
             setTitle("Personalizar Pedido Express");
         }else{
-        setTitle("Personalizar Pedido Programado");
+            setTitle("Personalizar Pedido Programado");
         }
+        
         setSize(600, 520);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -49,14 +61,20 @@ public class FrmProgramadoPedido extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * construye y posiciona los elementos de la interfaz grafica
+     * carga la informacion basica del producto como su nombre y precio
+     * y configura los controles de entrada de texto y seleccion
+     */
     private void inicializarComponentes() {
         LblTitulo = new JLabel("PERSONALIZAR PEDIDO");
         LblTitulo.setBounds(150, 20, 400, 30);
         LblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         add(LblTitulo);
 
+        // se arma la etiqueta con los datos del producto
         LblProducto = new JLabel("Producto: " + productoSeleccionado.getNombre()
-                + " | Tamaño: " + productoSeleccionado.getTamanio()
+                + " | Tamano: " + productoSeleccionado.getTamanio()
                 + " | Precio: $" + productoSeleccionado.getPrecio());
         LblProducto.setBounds(50, 70, 500, 25);
         add(LblProducto);
@@ -101,19 +119,23 @@ public class FrmProgramadoPedido extends JFrame {
         BtnVerCarrito.setForeground(Color.WHITE);
         add(BtnVerCarrito);
 
-        BtnRegresar = new JButton("Regresar al Menú");
+        BtnRegresar = new JButton("Regresar al Menu");
         BtnRegresar.setBounds(430, 430, 150, 40);
         BtnRegresar.setBackground(new Color(200, 0, 0));
         BtnRegresar.setForeground(Color.WHITE);
         add(BtnRegresar);
     }
 
+    /**
+     * define el comportamiento interactivo de los botones y el selector de cantidad
+     * maneja la insercion del producto al objeto del pedido y la navegacion
+     * entre las ventanas del flujo de compra
+     */
     private void agregarEventos() {
-
 
         BtnAgregar.addActionListener(e -> {
             
-            // Creamos el renglón del carrito y lo metemos a la mochila
+            // creamos el renglon del carrito y lo metemos al objeto general del pedido
             ProductoCarritoDTO item = new ProductoCarritoDTO();
             item.setProducto(productoSeleccionado);
             item.setCantidad((int) SpnCantidad.getValue());
@@ -127,26 +149,29 @@ public class FrmProgramadoPedido extends JFrame {
             pedidoActual.getProductos().add(item);
 
             JOptionPane.showMessageDialog(this,
-                    "Producto agregado al carrito",
-                    "Éxito",
+                    "producto agregado al carrito",
+                    "exito",
                     JOptionPane.INFORMATION_MESSAGE);
-            TxtNotas.setText(""); // Limpiamos las notas por si quiere otro
+            TxtNotas.setText(""); // limpiamos las notas por si el usuario quiere agregar otro producto
             SpnCantidad.setValue(1);
-            actualizarResumen(); //AQUÍ PRÁCTICAMENTE NO HICE NADA DE NADA (W)
+            actualizarResumen(); 
         });
 
+        // navegacion de retroceso al catalogo
         BtnRegresar.addActionListener(e -> {
             new FrmProgramadoMenu(pedidoActual); 
             dispose();
         });
 
+        // avance hacia la ventana de pago o revision del carrito
         BtnVerCarrito.addActionListener(e -> {
             new FrmProgramadoCarrito(pedidoActual); 
             dispose();
         });
         
         /**
-         * Método listener que se ejecuta cada que el spnCantidad cambia su valor
+         * listener dinamico que se ejecuta cada que el spinner de cantidad cambia
+         * recalcula el subtotal al instante
          */
         SpnCantidad.addChangeListener(e -> {
             actualizarResumen();
@@ -154,6 +179,10 @@ public class FrmProgramadoPedido extends JFrame {
 
     }
 
+    /**
+     * calcula el total multiplicando el precio unitario del producto seleccionado
+     * por la cantidad elegida en el spinner y plasma el desglose en el area de texto inferior
+     */
     private void actualizarResumen() {
 
         int cantidad = (int) SpnCantidad.getValue();
@@ -161,12 +190,10 @@ public class FrmProgramadoPedido extends JFrame {
 
         TxtResumen.setText(
                 "Producto: " + productoSeleccionado.getNombre()
-                + "\nTamaño: " + productoSeleccionado.getTamanio()
+                + "\nTamano: " + productoSeleccionado.getTamanio()
                 + "\nPrecio unitario: $" + productoSeleccionado.getPrecio()
                 + "\nCantidad: " + cantidad
                 + "\nTotal: $" + totalItem
         );
     }
-    
-    
 }
