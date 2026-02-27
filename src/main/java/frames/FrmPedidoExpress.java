@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * representa la pantalla para realizar pedidos express en el sistema
+ * permite a los clientes seleccionar productos del menu rapido y agregarlos
+ * a un carrito de compras temporal sin necesidad de registrarse
+ * forma parte de la capa de presentacion
  *
  * @author Noelia E.N.
  */
@@ -25,9 +29,14 @@ public class FrmPedidoExpress extends JFrame {
 
     private DefaultListModel<String> modeloLista;
 
+    /**
+     * constructor principal de la ventana de pedido express
+     * establece las dimensiones el comportamiento de cierre
+     * y llama a los metodos para construir la interfaz
+     */
     public FrmPedidoExpress() {
 
-        setTitle("Pedido Express - Maye´s Pizzas");
+        setTitle("Pedido Express - Mayes Pizzas");
         setSize(600, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -39,6 +48,10 @@ public class FrmPedidoExpress extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * inicializa y posiciona los elementos visuales de la ventana
+     * configura la lista de productos disponibles y los botones de accion
+     */
     private void inicializarComponentes() {
 
         PnlPrincipal = new JPanel();
@@ -50,6 +63,7 @@ public class FrmPedidoExpress extends JFrame {
         LblTitulo.setBounds(150, 30, 300, 40);
         PnlPrincipal.add(LblTitulo);
 
+        // se agregan pizzas de ejemplo a la lista visual
         modeloLista = new DefaultListModel<>();
         modeloLista.addElement("Pizza Pepperoni - $150");
         modeloLista.addElement("Pizza Queso - $125");
@@ -73,6 +87,9 @@ public class FrmPedidoExpress extends JFrame {
         PnlPrincipal.add(BtnRegresar);
     }
 
+    /**
+     * aplica la paleta de colores de la pizzeria a los botones y al fondo
+     */
     private void aplicarEstilos() {
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
@@ -87,33 +104,40 @@ public class FrmPedidoExpress extends JFrame {
         BtnRegresar.setForeground(Color.WHITE);
     }
 
+    /**
+     * define el comportamiento interactivo de los botones
+     * valida selecciones en la lista y maneja la navegacion
+     */
     private void agregarEventos() {
 
+        // accion para volver al menu de inicio
         BtnRegresar.addActionListener(e -> {
             new FrmPantallaBienvenida();
             dispose();
         });
 
+        // valida si se eligio un elemento de la lista antes de agregarlo
         BtnAgregar.addActionListener(e -> {
 
             String seleccion = ListaPizzas.getSelectedValue();
 
             if (seleccion == null) {
                 JOptionPane.showMessageDialog(this,
-                        "Debe seleccionar una pizza",
-                        "Error",
+                        "debe seleccionar una pizza",
+                        "error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             JOptionPane.showMessageDialog(this,
-                    "Agregado: " + seleccion,
-                    "Carrito",
+                    "agregado: " + seleccion,
+                    "carrito",
                     JOptionPane.INFORMATION_MESSAGE);
         });
 
+        // navegacion hacia el resumen del pedido
         BtnIrAlCarrito.addActionListener(e -> {
-            //aqui va el carrito del express
+            // aqui va el carrito del express
         });
     }
 }
