@@ -27,7 +27,7 @@ import persistencia.conexion.ConexionBD;
  * permite visualizar pedidos activos buscar por telefono folio o rango de fechas
  * marcar pedidos como listo y registrar entregas
  *
- * @author noelia E.N.
+ * @author Noelia E.N.
  */
 public class FrmGestionEntregas extends JFrame {
 
@@ -554,3 +554,4 @@ public class FrmGestionEntregas extends JFrame {
         actualizarBotones();
     }
 }
+
