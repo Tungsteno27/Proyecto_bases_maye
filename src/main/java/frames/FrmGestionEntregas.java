@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -23,15 +23,15 @@ import persistencia.DAOs.PedidoExpressDAO;
 import persistencia.conexion.ConexionBD;
 
 /**
- * Panel del empleado para gestionar el ciclo de vida de los pedidos. Permite
- * visualizar pedidos activos, buscar por teléfono, folio o rango de fechas,
- * marcar pedidos como Listo y registrar entregas.
+ * panel del empleado para gestionar el ciclo de vida de los pedidos
+ * permite visualizar pedidos activos buscar por telefono folio o rango de fechas
+ * marcar pedidos como listo y registrar entregas
  *
- * @author Noelia E.N.
+ * @author noelia E.N.
  */
 public class FrmGestionEntregas extends JFrame {
 
-    // --- Búsqueda ---
+    // --- busqueda ---
     private JTextField TxtBuscarTelefono;
     private JTextField TxtBuscarFolio;
     private JTextField TxtFechaInicio;
@@ -41,12 +41,12 @@ public class FrmGestionEntregas extends JFrame {
     private JButton BtnBuscarFechas;
     private JButton BtnMostrarTodos;
 
-    // --- Tabla ---
+    // --- tabla ---
     private JTable TblPedidos;
     private DefaultTableModel modeloTabla;
     private JScrollPane ScrollTabla;
 
-    // --- Detalle ---
+    // --- detalle ---
     private JLabel LblIdPedido;
     private JLabel LblTipoPedido;
     private JLabel LblEstadoPedido;
@@ -54,7 +54,7 @@ public class FrmGestionEntregas extends JFrame {
     private JLabel LblFechaPedido;
     private JLabel LblTotalPedido;
 
-    // --- Acciones ---
+    // --- acciones ---
     private JButton BtnMarcarListo;
     private JButton BtnRegistrarEntrega;
     private JButton BtnCancelar;
@@ -66,9 +66,14 @@ public class FrmGestionEntregas extends JFrame {
 
     private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    /**
+     * constructor principal de la ventana de gestion de entregas
+     * configura la interfaz inicializa la conexion y carga los pedidos iniciales
+     * * @param sesion el usuario empleado que esta utilizando el sistema
+     */
     public FrmGestionEntregas(UsuarioDTO sesion) {
         this.sesionActual = sesion;
-        setTitle("Gestión de Entregas - Maye's Pizzas");
+        setTitle("Gestion de Entregas - Mayes Pizzas");
         setSize(950, 620);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -80,6 +85,10 @@ public class FrmGestionEntregas extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * inicializa la capa de negocio y los objetos dao necesarios
+     * prepara la conexion a la base de datos para realizar busquedas y actualizaciones
+     */
     private void inicializarNegocio() {
         ConexionBD conexion = new ConexionBD();
         pedidoBO = new PedidoBO(
@@ -87,27 +96,28 @@ public class FrmGestionEntregas extends JFrame {
                 new PedidoExpressDAO(conexion)
         );
     }
-
-    // =========================================================================
-    // COMPONENTES
-    // =========================================================================
+    
+    /**
+     * construye y posiciona todos los elementos visuales de la interfaz
+     * crea los paneles de busqueda la tabla principal y el area de detalles
+     */
     private void inicializarComponentes() {
         JPanel PnlPrincipal = new JPanel();
         PnlPrincipal.setLayout(null);
         add(PnlPrincipal);
 
-        JLabel LblTitulo = new JLabel("GESTIÓN DE ENTREGAS");
+        JLabel LblTitulo = new JLabel("GESTION DE ENTREGAS");
         LblTitulo.setBounds(330, 15, 300, 35);
         LblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
         PnlPrincipal.add(LblTitulo);
 
-        // --- Panel búsqueda ---
+        // --- panel busqueda ---
         JPanel PnlBusqueda = new JPanel(null);
         PnlBusqueda.setBounds(10, 60, 600, 110);
-        PnlBusqueda.setBorder(BorderFactory.createTitledBorder("Buscar pedidos"));
+        PnlBusqueda.setBorder(BorderFactory.createTitledBorder("buscar pedidos"));
         PnlPrincipal.add(PnlBusqueda);
 
-        JLabel LblTel = new JLabel("Teléfono:");
+        JLabel LblTel = new JLabel("Telefono:");
         LblTel.setBounds(10, 25, 70, 25);
         PnlBusqueda.add(LblTel);
         TxtBuscarTelefono = new JTextField();
@@ -149,7 +159,6 @@ public class FrmGestionEntregas extends JFrame {
         BtnMostrarTodos.setBounds(455, 68, 110, 28);
         PnlBusqueda.add(BtnMostrarTodos);
 
-        // --- Tabla ---
         String[] columnas = {"ID", "Tipo", "Folio", "Fecha", "Estado", "Total"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -169,10 +178,10 @@ public class FrmGestionEntregas extends JFrame {
         ScrollTabla.setBounds(10, 180, 600, 320);
         PnlPrincipal.add(ScrollTabla);
 
-        // --- Panel detalle ---
+        // --- panel detalle ---
         JPanel PnlDetalle = new JPanel(null);
         PnlDetalle.setBounds(625, 60, 300, 310);
-        PnlDetalle.setBorder(BorderFactory.createTitledBorder("Detalle del pedido"));
+        PnlDetalle.setBorder(BorderFactory.createTitledBorder("detalle del pedido"));
         PnlPrincipal.add(PnlDetalle);
 
         JLabel LblIdLabel = new JLabel("ID Pedido:");
@@ -220,7 +229,7 @@ public class FrmGestionEntregas extends JFrame {
         LblTotalPedido.setFont(new Font("Arial", Font.BOLD, 13));
         PnlDetalle.add(LblTotalPedido);
 
-        // --- Botones de acción ---
+        // --- botones de accion ---
         BtnMarcarListo = new JButton("Marcar como Listo");
         BtnMarcarListo.setBounds(625, 385, 300, 40);
         BtnMarcarListo.setEnabled(false);
@@ -240,7 +249,7 @@ public class FrmGestionEntregas extends JFrame {
         BtnRegresar.setBounds(10, 520, 180, 35);
         PnlPrincipal.add(BtnRegresar);
 
-        JLabel LblAyuda = new JLabel("* Los pedidos se muestran del más antiguo al más reciente");
+        JLabel LblAyuda = new JLabel("* los pedidos se muestran del mas antiguo al mas reciente");
         LblAyuda.setBounds(200, 525, 400, 20);
         LblAyuda.setFont(new Font("Arial", Font.ITALIC, 11));
         LblAyuda.setForeground(Color.GRAY);
@@ -248,10 +257,10 @@ public class FrmGestionEntregas extends JFrame {
 
         PnlPrincipal.setBackground(new Color(255, 248, 220));
     }
-
-    // =========================================================================
-    // ESTILOS
-    // =========================================================================
+    
+    /**
+     * aplica colores tipografias y estilos visuales a los componentes de la ventana
+     */
     private void aplicarEstilos() {
         BtnBuscarTelefono.setBackground(new Color(255, 140, 0));
         BtnBuscarTelefono.setForeground(Color.WHITE);
@@ -272,10 +281,11 @@ public class FrmGestionEntregas extends JFrame {
         BtnRegresar.setBackground(new Color(50, 50, 50));
         BtnRegresar.setForeground(Color.WHITE);
     }
-
-    // =========================================================================
-    // EVENTOS
-    // =========================================================================
+    
+    /**
+     * define los manejadores de eventos para todos los botones y para la tabla
+     * se encarga de las busquedas la seleccion de elementos y los cambios de estado
+     */
     private void agregarEventos() {
 
         BtnRegresar.addActionListener(e -> {
@@ -288,24 +298,24 @@ public class FrmGestionEntregas extends JFrame {
         BtnBuscarTelefono.addActionListener(e -> {
             String tel = TxtBuscarTelefono.getText().trim();
             if (tel.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ingrese un número de teléfono", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "ingrese un numero de telefono", "aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             try {
                 List<PedidoDTO> resultados = pedidoBO.buscarPorTelefono(tel);
                 cargarTabla(resultados);
                 if (resultados.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "No se encontraron pedidos para ese teléfono", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "no se encontraron pedidos para ese telefono", "sin resultados", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         BtnBuscarFolio.addActionListener(e -> {
             String folioStr = TxtBuscarFolio.getText().trim();
             if (folioStr.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ingrese un número de folio", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "ingrese un numero de folio", "aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             try {
@@ -320,12 +330,12 @@ public class FrmGestionEntregas extends JFrame {
                     agregarFilaTabla(resultado);
                     mostrarDetalle(resultado);
                 } else {
-                    JOptionPane.showMessageDialog(this, "No se encontró ningún pedido express con el folio: " + folio, "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "no se encontro ningun pedido express con el folio: " + folio, "sin resultados", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "El folio debe ser un número entero", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "el folio debe ser un numero entero", "error", JOptionPane.ERROR_MESSAGE);
             } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -337,12 +347,12 @@ public class FrmGestionEntregas extends JFrame {
                         inicio.atStartOfDay(), fin.atTime(LocalTime.MAX));
                 cargarTabla(resultados);
                 if (resultados.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "No se encontraron pedidos en ese rango", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "no se encontraron pedidos en ese rango", "sin resultados", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (DateTimeParseException ex) {
-                JOptionPane.showMessageDialog(this, "Formato de fecha incorrecto, use dd/MM/yyyy", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "formato de fecha incorrecto use dd/MM/yyyy", "error", JOptionPane.ERROR_MESSAGE);
             } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -361,7 +371,7 @@ public class FrmGestionEntregas extends JFrame {
                             actualizarBotones();
                         }
                     } catch (NegocioException ex) {
-                        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -372,18 +382,18 @@ public class FrmGestionEntregas extends JFrame {
                 return;
             }
             int confirmacion = JOptionPane.showConfirmDialog(this,
-                    "¿Marcar el pedido #" + pedidoSeleccionado.getIdPedido() + " como Listo?",
-                    "Confirmar", JOptionPane.YES_NO_OPTION);
+                    "marcar el pedido " + pedidoSeleccionado.getIdPedido() + " como listo?",
+                    "confirmar", JOptionPane.YES_NO_OPTION);
             if (confirmacion != JOptionPane.YES_OPTION) {
                 return;
             }
             try {
                 pedidoBO.marcarComoListo(pedidoSeleccionado.getIdPedido());
-                JOptionPane.showMessageDialog(this, "Pedido marcado como Listo correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "pedido marcado como listo correctamente", "exito", JOptionPane.INFORMATION_MESSAGE);
                 limpiarSeleccion();
                 cargarPedidosActivos();
             } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -396,18 +406,18 @@ public class FrmGestionEntregas extends JFrame {
 
             if ("Express".equals(pedidoSeleccionado.getTipo())) {
                 String folioStr = JOptionPane.showInputDialog(this,
-                        "Ingrese el folio del pedido express:", "Validación Express", JOptionPane.PLAIN_MESSAGE);
+                        "ingrese el folio del pedido express:", "validacion express", JOptionPane.PLAIN_MESSAGE);
                 if (folioStr == null || folioStr.trim().isEmpty()) {
                     return;
                 }
                 try {
                     folioIngresado = Integer.parseInt(folioStr.trim());
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "El folio debe ser un número", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "el folio debe ser un numero", "error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 pinIngresado = JOptionPane.showInputDialog(this,
-                        "Ingrese el PIN de 8 dígitos:", "Validación Express", JOptionPane.PLAIN_MESSAGE);
+                        "ingrese el pin de 8 digitos:", "validacion express", JOptionPane.PLAIN_MESSAGE);
                 if (pinIngresado == null || pinIngresado.trim().isEmpty()) {
                     return;
                 }
@@ -415,11 +425,11 @@ public class FrmGestionEntregas extends JFrame {
 
             try {
                 pedidoBO.marcarComoEntregado(pedidoSeleccionado.getIdPedido(), folioIngresado, pinIngresado);
-                JOptionPane.showMessageDialog(this, "Pedido entregado y pago registrado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "pedido entregado y pago registrado correctamente", "exito", JOptionPane.INFORMATION_MESSAGE);
                 limpiarSeleccion();
                 cargarPedidosActivos();
             } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
                 cargarPedidosActivos();
             }
         });
@@ -429,33 +439,37 @@ public class FrmGestionEntregas extends JFrame {
                 return;
             }
             int confirmacion = JOptionPane.showConfirmDialog(this,
-                    "¿Cancelar el pedido #" + pedidoSeleccionado.getIdPedido() + "?\nEsta acción no se puede deshacer.",
-                    "Confirmar Cancelación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    "cancelar el pedido " + pedidoSeleccionado.getIdPedido() + "\nesta accion no se puede deshacer",
+                    "confirmar cancelacion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (confirmacion != JOptionPane.YES_OPTION) {
                 return;
             }
             try {
                 pedidoBO.cancelarPedido(pedidoSeleccionado.getIdPedido());
-                JOptionPane.showMessageDialog(this, "Pedido cancelado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "pedido cancelado correctamente", "exito", JOptionPane.INFORMATION_MESSAGE);
                 limpiarSeleccion();
                 cargarPedidosActivos();
             } catch (NegocioException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
-    // =========================================================================
-    // AUXILIARES
-    // =========================================================================
+    /**
+     * consulta la base de datos y carga en la tabla todos los pedidos que aun no se han entregado
+     */
     private void cargarPedidosActivos() {
         try {
             cargarTabla(pedidoBO.obtenerPedidosActivos());
         } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar pedidos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "error al cargar pedidos: " + ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * recibe una lista de pedidos limpia el modelo de la tabla y los agrega uno por uno
+     * * @param pedidos la lista de objetos dtos a mostrar
+     */
     private void cargarTabla(List<PedidoDTO> pedidos) {
         modeloTabla.setRowCount(0);
         for (PedidoDTO p : pedidos) {
@@ -464,6 +478,10 @@ public class FrmGestionEntregas extends JFrame {
         limpiarSeleccion();
     }
 
+    /**
+     * agrega un pedido individual como una fila al modelo visual de la tabla
+     * * @param p el objeto con la informacion del pedido a agregar
+     */
     private void agregarFilaTabla(PedidoDTO p) {
         String tipo = p.getTipo() != null ? p.getTipo() : "-";
         String folio = p.getFolio() != null ? String.valueOf(p.getFolio()) : "-";
@@ -475,11 +493,15 @@ public class FrmGestionEntregas extends JFrame {
         });
     }
 
+    /**
+     * actualiza el panel de detalles lateral con la informacion del pedido seleccionado
+     * * @param p el pedido del cual se extraeran los detalles
+     */
     private void mostrarDetalle(PedidoDTO p) {
         LblIdPedido.setText(String.valueOf(p.getIdPedido()));
         LblTipoPedido.setText(p.getTipo() != null ? p.getTipo() : "-");
         LblEstadoPedido.setText(p.getEstado());
-        LblFolioPedido.setText(p.getFolio() != null ? String.valueOf(p.getFolio()) : "N/A");
+        LblFolioPedido.setText(p.getFolio() != null ? String.valueOf(p.getFolio()) : "n/a");
         LblFechaPedido.setText(p.getFechaCreacion() != null
                 ? p.getFechaCreacion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : "-");
         LblTotalPedido.setText("$" + String.format("%.2f", p.getTotalPagar()));
@@ -498,6 +520,10 @@ public class FrmGestionEntregas extends JFrame {
         }
     }
 
+    /**
+     * habilita o deshabilita los botones de accion segun el estado del pedido actual
+     * evita que se entregue un pedido que apenas esta pendiente o se cancele uno ya listo
+     */
     private void actualizarBotones() {
         if (pedidoSeleccionado == null) {
             BtnMarcarListo.setEnabled(false);
@@ -511,6 +537,10 @@ public class FrmGestionEntregas extends JFrame {
         BtnCancelar.setEnabled("PENDIENTE".equals(estado));
     }
 
+    /**
+     * deselecciona la fila actual limpia los textos del panel de detalles
+     * y deshabilita todos los botones de operacion
+     */
     private void limpiarSeleccion() {
         pedidoSeleccionado = null;
         TblPedidos.clearSelection();
