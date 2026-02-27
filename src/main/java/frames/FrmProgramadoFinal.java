@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -8,14 +8,28 @@ import javax.swing.*;
 import java.awt.*;
 import negocio.DTOs.UsuarioDTO;
 
+/**
+ * pantalla que muestra la confirmacion de un pedido programado exitoso
+ * informa al cliente el numero de folio generado y el estado inicial
+ * del pedido recien creado en la base de datos
+ *
+ * @author Dell PC
+ */
 public class FrmProgramadoFinal extends JFrame {
 
     private JLabel LblTitulo, LblNumeroPedido, LblEstado;
     private JButton BtnInicio;
     private String numeroPedidoReal;
 
-    private UsuarioDTO sesionActual; // Mochila
+    private UsuarioDTO sesionActual; // mochila con los datos del usuario
 
+    /**
+     * constructor de la ventana de finalizacion de pedido
+     * recibe el identificador del pedido generado y los datos de la sesion
+     * para mostrarlos en pantalla y permitir el retorno al menu principal
+     * * @param idPedidoReal el numero de folio asignado al pedido
+     * * @param sesion la sesion actual del usuario que realizo la compra
+     */
     public FrmProgramadoFinal(String idPedidoReal, UsuarioDTO sesion) {
         this.numeroPedidoReal = idPedidoReal;
         this.sesionActual = sesion;
@@ -31,6 +45,11 @@ public class FrmProgramadoFinal extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * inicializa y posiciona las etiquetas de texto y el boton de inicio
+     * muestra el mensaje de exito concatenando el folio real del pedido
+     * y asigna el evento para regresar a la pantalla de opciones del usuario
+     */
     private void inicializarComponentes() {
         LblTitulo = new JLabel("Pedido Exitoso");
         LblTitulo.setBounds(130, 60, 300, 40);
@@ -53,10 +72,10 @@ public class FrmProgramadoFinal extends JFrame {
         BtnInicio.setForeground(Color.WHITE);
         add(BtnInicio);
 
+        // evento para cerrar la confirmacion y volver al menu del cliente
         BtnInicio.addActionListener(e -> {
             new FrmMenuUsuario(sesionActual); 
             dispose();
         });
     }
 }
-
