@@ -1,10 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -22,15 +18,18 @@ import persistencia.DAOs.TelefonoDAO;
 import persistencia.conexion.ConexionBD;
 
 /**
- * Pantalla para el CRUD de Clientes
+ * pantalla para el crud de clientes
+ * permite a los empleados y administradores visualizar a los clientes registrados,
+ * consultar sus datos de contacto y cambiar su estatus operativo en el sistema
+ *
  * @author julian izaguirre
  */
-public class FrmGestionClientes extends JFrame {
+public class FrmGestionCliente extends JFrame {
     
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
     
-    // Formulario
+    // formulario
     private JLabel LblNombres, LblApellidos, LblTelefono, LblEstatus;
     private JTextField TxtNombres, TxtApellidoPaterno, TxtApellidoMaterno, TxtTelefono;
     private JComboBox<String> CmbEstatus;
@@ -44,13 +43,18 @@ public class FrmGestionClientes extends JFrame {
     private UsuarioDTO sesionActual;
     private int idClienteSeleccionado = -1;
     
-    // BO de Clientes
+    // bo de clientes
     private IClienteBO clienteBO;
 
-    public FrmGestionClientes(UsuarioDTO sesion) {
+    /**
+     * constructor principal de la ventana de gestion de clientes
+     * inicializa la capa de negocio los componentes graficos y carga la tabla
+     * * @param sesion el usuario actual que ha iniciado sesion en el sistema
+     */
+    public FrmGestionCliente(UsuarioDTO sesion) {
         this.sesionActual = sesion;
 
-        setTitle("Gestión de Clientes - Maye´s Pizzas");
+        setTitle("Gestion de Clientes - Mayes Pizzas");
         setSize(900, 520);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -66,6 +70,10 @@ public class FrmGestionClientes extends JFrame {
         setVisible(true);
     }
     
+    /**
+     * inicializa las instancias de la capa de negocio y acceso a datos
+     * prepara la conexion a la base de datos para realizar las consultas de clientes
+     */
     private void inicializarNegocio() {
         ConexionBD conexion = new ConexionBD();
         ITelefonoBO telefonoBO = new TelefonoBO(new TelefonoDAO(conexion));
@@ -77,12 +85,16 @@ public class FrmGestionClientes extends JFrame {
         );
     }
 
+    /**
+     * construye y posiciona todos los elementos visuales de la interfaz grafica
+     * define los campos de texto etiquetas botones y la tabla de registros
+     */
     private void inicializarComponentes() {
         PnlPrincipal = new JPanel();
         PnlPrincipal.setLayout(null);
         add(PnlPrincipal);
 
-        LblTitulo = new JLabel("GESTIÓN DE CLIENTES");
+        LblTitulo = new JLabel("GESTION DE CLIENTES");
         LblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         LblTitulo.setBounds(250, 20, 400, 40);
         LblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
@@ -101,19 +113,19 @@ public class FrmGestionClientes extends JFrame {
         PnlPrincipal.add(LblApellidos);
         TxtApellidoPaterno = new JTextField();
         TxtApellidoPaterno.setBounds(30, 170, 100, 30);
-        TxtApellidoPaterno.setEditable(false); // No se edita desde aquí
+        TxtApellidoPaterno.setEditable(false); 
         PnlPrincipal.add(TxtApellidoPaterno);
         TxtApellidoMaterno = new JTextField();
         TxtApellidoMaterno.setBounds(140, 170, 100, 30);
-        TxtApellidoMaterno.setEditable(false); // No se edita desde aquí
+        TxtApellidoMaterno.setEditable(false);
         PnlPrincipal.add(TxtApellidoMaterno);
 
-        LblTelefono = new JLabel("Teléfono Principal");
+        LblTelefono = new JLabel("Telefono Principal");
         LblTelefono.setBounds(30, 210, 200, 25);
         PnlPrincipal.add(LblTelefono);
         TxtTelefono = new JTextField();
         TxtTelefono.setBounds(30, 235, 200, 30);
-        TxtTelefono.setEditable(false); // No se edita desde aquí
+        TxtTelefono.setEditable(false);
         PnlPrincipal.add(TxtTelefono);
 
         LblEstatus = new JLabel("Estatus en el Sistema");
@@ -123,7 +135,7 @@ public class FrmGestionClientes extends JFrame {
         CmbEstatus.setBounds(30, 300, 200, 30);
         PnlPrincipal.add(CmbEstatus);
 
-        modeloTabla = new DefaultTableModel(new String[]{"ID", "Nombre Completo", "Teléfono", "Estatus"}, 0) {
+        modeloTabla = new DefaultTableModel(new String[]{"ID", "Nombre Completo", "Telefono", "Estatus"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; } 
         };
@@ -151,6 +163,9 @@ public class FrmGestionClientes extends JFrame {
         PnlPrincipal.add(BtnRegresar);
     }
 
+    /**
+     * aplica los colores y estilos de fuente a los componentes de la ventana
+     */
     private void aplicarEstilos() {
         PnlPrincipal.setBackground(new Color(255, 248, 220));
 
@@ -167,6 +182,10 @@ public class FrmGestionClientes extends JFrame {
         BtnRegresar.setForeground(Color.WHITE);
     }
 
+    /**
+     * registra los oyentes de eventos para los botones y la tabla
+     * define la logica a ejecutar cuando el usuario interactua con la interfaz
+     */
     private void agregarEventos() {
         
         BtnRegresar.addActionListener(e -> {
@@ -175,7 +194,7 @@ public class FrmGestionClientes extends JFrame {
         });
 
         BtnLimpiar.addActionListener(e -> limpiarFormulario());
-        // Al hacer clic en la tabla
+        // al hacer clic en la tabla
         TblClientes.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -195,7 +214,7 @@ public class FrmGestionClientes extends JFrame {
                             TxtTelefono.setText("");
                         }
                     } catch (NegocioException ex) {
-                         JOptionPane.showMessageDialog(FrmGestionClientes.this, "Error al cargar los detalles del cliente", "Error", JOptionPane.ERROR_MESSAGE);
+                         JOptionPane.showMessageDialog(FrmGestionCliente.this, "error al cargar los detalles del cliente", "error", JOptionPane.ERROR_MESSAGE);
                     }
                     
                     String estatus = modeloTabla.getValueAt(fila, 3).toString();
@@ -211,35 +230,39 @@ public class FrmGestionClientes extends JFrame {
             String nuevoEstatus = CmbEstatus.getSelectedItem().toString();
             
             try {
-                // Mandamos a guardar el nuevo estatus a la BD
+                // mandamos a guardar el nuevo estatus a la base de datos
                 clienteBO.cambiarEstatus(idClienteSeleccionado, nuevoEstatus);
                 
-                JOptionPane.showMessageDialog(this, "El estatus del cliente se actualizó correctamente a: " + nuevoEstatus, "Actualización Exitosa", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "el estatus del cliente se actualizo correctamente a: " + nuevoEstatus, "actualizacion exitosa", JOptionPane.INFORMATION_MESSAGE);
                 
                 limpiarFormulario();
-                cargarTabla(); // Refrescamos la tabla para ver el cambio
+                cargarTabla(); // refrescamos la tabla para ver el cambio
                 
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error al actualizar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "error al actualizar: " + ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
             }
-            JOptionPane.showMessageDialog(this, "Para actualizar la información personal, el cliente debe hacerlo desde su perfil.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "para actualizar la informacion personal el cliente debe hacerlo desde su perfil", "informacion", JOptionPane.INFORMATION_MESSAGE);
         });
 
         BtnEliminar.addActionListener(e -> {
-            int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que deseas dar de baja (desactivar) a este cliente?", "Confirmar Baja", JOptionPane.YES_NO_OPTION);
+            int confirmacion = JOptionPane.showConfirmDialog(this, "estas seguro de que deseas dar de baja desactivar a este cliente?", "confirmar baja", JOptionPane.YES_NO_OPTION);
             if (confirmacion == JOptionPane.YES_OPTION) {
                 try {
                     clienteBO.darDeBajaCliente(idClienteSeleccionado);
-                    JOptionPane.showMessageDialog(this, "Cliente dado de baja exitosamente.");
+                    JOptionPane.showMessageDialog(this, "cliente dado de baja exitosamente");
                     limpiarFormulario();
                     cargarTabla(); 
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Error al dar de baja: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "error al dar de baja: " + ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
     }
 
+    /**
+     * consulta la base de datos para obtener todos los clientes registrados
+     * y llena el modelo de la tabla visual con sus datos y estatus
+     */
     private void cargarTabla() {
         modeloTabla.setRowCount(0); 
         try {
@@ -250,7 +273,7 @@ public class FrmGestionClientes extends JFrame {
                         (c.getApellidoMaterno() != null ? " " + c.getApellidoMaterno() : "");
                         
                 String telefono = (c.getTelefonos() != null && !c.getTelefonos().isEmpty()) 
-                                    ? c.getTelefonos().get(0).getNumero() : "Sin registro";
+                                    ? c.getTelefonos().get(0).getNumero() : "sin registro";
                                     
                 modeloTabla.addRow(new Object[]{
                     c.getIdCliente(),
@@ -260,10 +283,14 @@ public class FrmGestionClientes extends JFrame {
                 });
             }
         } catch (NegocioException ex) {
-            JOptionPane.showMessageDialog(this, "Error al cargar la tabla de clientes: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "error al cargar la tabla de clientes: " + ex.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * limpia todos los campos de texto resetea el estatus a su valor por defecto
+     * y deshabilita los botones de accion que requieren una seleccion en la tabla
+     */
     private void limpiarFormulario() {
         idClienteSeleccionado = -1;
         TxtNombres.setText("");
