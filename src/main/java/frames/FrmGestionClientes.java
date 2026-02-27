@@ -24,7 +24,7 @@ import persistencia.conexion.ConexionBD;
  *
  * @author julian izaguirre
  */
-public class FrmGestionCliente extends JFrame {
+public class FrmGestionClientes extends JFrame {
     
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
@@ -51,7 +51,7 @@ public class FrmGestionCliente extends JFrame {
      * inicializa la capa de negocio los componentes graficos y carga la tabla
      * * @param sesion el usuario actual que ha iniciado sesion en el sistema
      */
-    public FrmGestionCliente(UsuarioDTO sesion) {
+    public FrmGestionClientes(UsuarioDTO sesion) {
         this.sesionActual = sesion;
 
         setTitle("Gestion de Clientes - Mayes Pizzas");
@@ -113,11 +113,11 @@ public class FrmGestionCliente extends JFrame {
         PnlPrincipal.add(LblApellidos);
         TxtApellidoPaterno = new JTextField();
         TxtApellidoPaterno.setBounds(30, 170, 100, 30);
-        TxtApellidoPaterno.setEditable(false); 
+        TxtApellidoPaterno.setEditable(false); // no se edita desde aqui
         PnlPrincipal.add(TxtApellidoPaterno);
         TxtApellidoMaterno = new JTextField();
         TxtApellidoMaterno.setBounds(140, 170, 100, 30);
-        TxtApellidoMaterno.setEditable(false);
+        TxtApellidoMaterno.setEditable(false); // no se edita desde aqui
         PnlPrincipal.add(TxtApellidoMaterno);
 
         LblTelefono = new JLabel("Telefono Principal");
@@ -125,7 +125,7 @@ public class FrmGestionCliente extends JFrame {
         PnlPrincipal.add(LblTelefono);
         TxtTelefono = new JTextField();
         TxtTelefono.setBounds(30, 235, 200, 30);
-        TxtTelefono.setEditable(false);
+        TxtTelefono.setEditable(false); // no se edita desde aqui
         PnlPrincipal.add(TxtTelefono);
 
         LblEstatus = new JLabel("Estatus en el Sistema");
@@ -214,7 +214,7 @@ public class FrmGestionCliente extends JFrame {
                             TxtTelefono.setText("");
                         }
                     } catch (NegocioException ex) {
-                         JOptionPane.showMessageDialog(FrmGestionCliente.this, "error al cargar los detalles del cliente", "error", JOptionPane.ERROR_MESSAGE);
+                         JOptionPane.showMessageDialog(FrmGestionClientes.this, "error al cargar los detalles del cliente", "error", JOptionPane.ERROR_MESSAGE);
                     }
                     
                     String estatus = modeloTabla.getValueAt(fila, 3).toString();
