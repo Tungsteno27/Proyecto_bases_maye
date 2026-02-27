@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -8,14 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Representa la pantalla principal del sistema Maye's Pizzas.
- * <p>
- * Esta ventana funciona como punto de entrada a la aplicación, permitiendo al
- * usuario navegar hacia las distintas opciones: iniciar sesión, registrarse,
- * realizar un pedido express, acceder como personal o salir del sistema.
- * </p>
- * Forma parte de la capa de presentación y está desarrollada utilizando Java
- * Swing sin diseñador visual.
+ * representa la pantalla principal del sistema mayes pizzas
+ * * esta ventana funciona como punto de entrada a la aplicacion permitiendo al
+ * usuario navegar hacia las distintas opciones iniciar sesion registrarse
+ * realizar un pedido express acceder como personal o salir del sistema
+ * * forma parte de la capa de presentacion y esta desarrollada utilizando java
+ * swing sin disenador visual
  *
  * @author Noelia E.N.
  */
@@ -29,11 +27,15 @@ public class FrmPantallaBienvenida extends JFrame {
     private JButton BtnAccesoPersonal;
     private JButton BtnSalir;
     
-    
+    /**
+     * constructor de la ventana de bienvenida
+     * establece las propiedades iniciales como el tamano y la accion de cierre
+     * y manda a llamar a los metodos de construccion de interfaz
+     */
     public FrmPantallaBienvenida() {
 
-        // Configuración básica del frame
-        setTitle("Maye's Pizzas");
+        // configuracion basica del frame
+        setTitle("Mayes Pizzas");
         setSize(500, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -45,21 +47,25 @@ public class FrmPantallaBienvenida extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * instancia y ubica los paneles etiquetas y botones
+     * de navegacion principal en el marco de la ventana
+     */
     private void inicializarComponentes() {
 
-        // Panel principal
+        // panel principal
         PnlPrincipal = new JPanel();
         PnlPrincipal.setLayout(null);
         add(PnlPrincipal);
 
-        // Logo
-        LblLogo = new JLabel("MAYE'S PIZZAS");
+        // logo
+        LblLogo = new JLabel("MAYES PIZZAS");
         LblLogo.setHorizontalAlignment(SwingConstants.CENTER);
         LblLogo.setBounds(50, 40, 400, 50);
         PnlPrincipal.add(LblLogo);
 
-        // Botones
-        BtnIniciarSesion = new JButton("Iniciar Sesión");
+        // botones
+        BtnIniciarSesion = new JButton("Iniciar Sesion");
         BtnIniciarSesion.setBounds(150, 120, 200, 35);
         PnlPrincipal.add(BtnIniciarSesion);
 
@@ -81,14 +87,15 @@ public class FrmPantallaBienvenida extends JFrame {
     }
 
     /**
-     * Método para ponerle color a los componentes
+     * metodo para ponerle color a los componentes visuales
+     * mantiene la coherencia de diseno usando los colores de la marca
      */
     private void aplicarEstilos() {
 
-        // Fondo cremita
+        // fondo cremita
         PnlPrincipal.setBackground(new Color(255, 248, 220));
 
-        // Botones naranjas
+        // botones naranjas
         BtnIniciarSesion.setBackground(new Color(255, 140, 0));
         BtnIniciarSesion.setForeground(Color.WHITE);
 
@@ -101,11 +108,16 @@ public class FrmPantallaBienvenida extends JFrame {
         BtnAccesoPersonal.setBackground(new Color(255, 140, 0));
         BtnAccesoPersonal.setForeground(Color.WHITE);
 
-        // Botón rojo
+        // boton rojo
         BtnSalir.setBackground(new Color(200, 0, 0));
         BtnSalir.setForeground(Color.WHITE);
     }
 
+    /**
+     * configura la logica de navegacion de la aplicacion
+     * al hacer clic en un boton se destruye esta ventana y se invoca
+     * a la vista correspondiente al modulo seleccionado
+     */
     private void agregarEventos() {
 
         BtnSalir.addActionListener(e -> System.exit(0));
@@ -132,7 +144,12 @@ public class FrmPantallaBienvenida extends JFrame {
         
     }
 
+    /**
+     * metodo lanzador del sistema
+     * @param args argumentos de linea de comandos
+     */
     public static void main(String[] args) {
         new FrmPantallaBienvenida();
     }
+
 }
