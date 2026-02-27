@@ -25,6 +25,9 @@ import persistencia.conexion.ConexionBD;
  * @author julian izaguirre
  */
 public class FrmGestionCliente extends JFrame {
+
+    // este se duplico es el mismo que el clientes pero se copio sin la s
+
     
     private JPanel PnlPrincipal;
     private JLabel LblTitulo;
