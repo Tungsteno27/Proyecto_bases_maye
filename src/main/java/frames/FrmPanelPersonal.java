@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 package frames;
 
@@ -14,6 +14,9 @@ import javax.swing.SwingConstants;
 import negocio.DTOs.UsuarioDTO;
 
 /**
+ * panel de control principal para el personal autorizado
+ * sirve como menu central para navegar entre los distintos
+ * modulos de gestion de la pizzeria como productos clientes y entregas
  *
  * @author julian izaguirre
  */
@@ -23,24 +26,36 @@ public class FrmPanelPersonal extends JFrame {
     private JLabel LblTitulo;
     private JButton BtnGestionProductos;
     private JButton BtnGestionClientes;
-    private JButton BtnGestionEntregas; // NUEVO
+    private JButton BtnGestionEntregas; // nuevo
     private JButton BtnCerrarSesion;
 
     private UsuarioDTO sesionActual;
 
+    /**
+     * constructor del panel de control
+     * recibe la sesion del usuario para mostrar su rol en el titulo y
+     * pasarlo a las siguientes ventanas para mantener la seguridad
+     * * @param sesion el usuario actual con sus permisos y datos
+     */
     public FrmPanelPersonal(UsuarioDTO sesion) {
         this.sesionActual = sesion;
 
         setTitle("Panel de Control - Maye´s Pizzas");
-        setSize(500, 500); // Se aumentó un poco para acomodar el botón nuevo
+        setSize(500, 500); // se aumento un poco para acomodar el boton nuevo
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        
         inicializarComponentes();
         aplicarEstilos();
         agregarEventos();
+        
         setVisible(true);
     }
 
+    /**
+     * crea y posiciona los botones y etiquetas en el panel
+     * acomoda las opciones de gestion en forma de lista vertical
+     */
     private void inicializarComponentes() {
         PnlPrincipal = new JPanel();
         PnlPrincipal.setLayout(null);
@@ -60,17 +75,21 @@ public class FrmPanelPersonal extends JFrame {
         BtnGestionClientes.setBounds(125, 180, 250, 40);
         PnlPrincipal.add(BtnGestionClientes);
 
-        // NUEVO - se agrega entre Clientes y Cerrar Sesión
+        // nuevo se agrega entre clientes y cerrar sesion
         BtnGestionEntregas = new JButton("Gestión de Entregas");
         BtnGestionEntregas.setBounds(125, 240, 250, 40);
         PnlPrincipal.add(BtnGestionEntregas);
 
-        // Se bajó de y=280 a y=340 para que no se encime con el botón nuevo
+        // se bajo de posicion en y para que no se encime con el boton nuevo
         BtnCerrarSesion = new JButton("Cerrar sesión");
         BtnCerrarSesion.setBounds(125, 340, 250, 40);
         PnlPrincipal.add(BtnCerrarSesion);
     }
 
+    /**
+     * asigna los colores de fondo y letras a la ventana y los botones
+     * para seguir la paleta de colores institucional del sistema
+     */
     private void aplicarEstilos() {
         PnlPrincipal.setBackground(new Color(255, 248, 220));
 
@@ -80,7 +99,7 @@ public class FrmPanelPersonal extends JFrame {
         BtnGestionClientes.setBackground(new Color(183, 28, 28));
         BtnGestionClientes.setForeground(Color.WHITE);
 
-        // NUEVO
+        // estilo del boton nuevo
         BtnGestionEntregas.setBackground(new Color(183, 28, 28));
         BtnGestionEntregas.setForeground(Color.WHITE);
 
@@ -88,6 +107,10 @@ public class FrmPanelPersonal extends JFrame {
         BtnCerrarSesion.setForeground(Color.WHITE);
     }
 
+    /**
+     * vincula las acciones de clic a cada boton del menu
+     * cierra esta ventana y abre el formulario correspondiente a la eleccion
+     */
     private void agregarEventos() {
 
         BtnCerrarSesion.addActionListener(e -> {
@@ -105,10 +128,11 @@ public class FrmPanelPersonal extends JFrame {
             dispose();
         });
 
-        // Nuevo
+        // evento del modulo nuevo
         BtnGestionEntregas.addActionListener(e -> {
             new FrmGestionEntregas(sesionActual);
             dispose();
         });
     }
+
 }
