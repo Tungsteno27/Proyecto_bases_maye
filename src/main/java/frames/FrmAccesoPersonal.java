@@ -101,7 +101,10 @@ public class FrmAccesoPersonal extends JFrame {
     }
     
     /**
-     * 
+     * define y agrupa todos los eventos de accion para los botones de la ventana
+     * recolecta los datos ingresados hace validaciones basicas y se comunica
+     * con la capa de negocio para iniciar sesion ademas bloquea el acceso a
+     * los usuarios con rol de cliente
      */
     private void agregarEventos() {
         BtnIngresar.addActionListener(e -> {
@@ -142,4 +145,5 @@ public class FrmAccesoPersonal extends JFrame {
         });
     }
 }
+
 
