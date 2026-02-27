@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * click nbfsnbhostsystemfilesystemtemplateslicenseslicense-defaulttxt to change this license
+ * click nbfsnbhostsystemfilesystemtemplatesclassesclassjava to edit this template
  */
 
 package frames;
@@ -27,6 +27,14 @@ import persistencia.DAOs.PedidoProductoDAO;
 import persistencia.DAOs.PedidoProgramadoDAO;
 import persistencia.conexion.ConexionBD;
 
+/**
+ * clase que representa la ventana del carrito de compras
+ * muestra el resumen de los productos seleccionados calcula los totales
+ * permite aplicar cupones de descuento y confirmar el pedido final
+ * en la base de datos manejando el flujo express y programado
+ * 
+ * @author julian izaguirre
+ */
 public class FrmProgramadoCarrito extends JFrame {
 
     private JTextArea TxtResumen;
@@ -41,10 +49,17 @@ public class FrmProgramadoCarrito extends JFrame {
     private double descuento = 0.0;
     private double total = 0.0;
 
+    /**
+     * constructor de la ventana del carrito
+     * recibe el objeto del pedido configura la interfaz grafica
+     * e inicializa las conexiones a la capa de negocio
+     * * @param pedido el pedido actual con los productos ya seleccionados
+     */
     public FrmProgramadoCarrito(PedidoDTO pedido) {
         this.pedidoActual = pedido;
 
-        if (pedidoActual.getTipo().equals("EXPRESS")) {
+        // validacion segura para evitar nullpointerexception
+        if ("EXPRESS".equals(pedidoActual.getTipo())) {
             setTitle("Carrito - Pedido Express");
         } else {
             setTitle("Carrito - Pedido Programado");
@@ -67,6 +82,10 @@ public class FrmProgramadoCarrito extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * crea y posiciona todos los elementos visuales en la ventana
+     * oculta la seccion de cupones de descuento si el pedido es tipo express
+     */
     private void inicializarComponentes() {
         JLabel LblTitulo = new JLabel("Resumen del Pedido");
         LblTitulo.setBounds(200, 30, 300, 35);
@@ -101,8 +120,8 @@ public class FrmProgramadoCarrito extends JFrame {
         LblDescuento.setBounds(120, 340, 300, 25);
         add(LblDescuento);
 
-        // Si es express oculta todo lo relacionado al cupón
-        if (pedidoActual.getTipo().equals("EXPRESS")) {
+        // si es express oculta todo lo relacionado al cupon
+        if ("EXPRESS".equals(pedidoActual.getTipo())) {
             LblCupon.setVisible(false);
             TxtCupon.setVisible(false);
             BtnAplicarCupon.setVisible(false);
@@ -127,6 +146,10 @@ public class FrmProgramadoCarrito extends JFrame {
         add(BtnConfirmar);
     }
 
+    /**
+     * recorre la lista de productos que el cliente agrego al pedido
+     * suma los precios para obtener el subtotal y genera el texto del resumen
+     */
     private void cargarCarritoReal() {
         subtotal = 0.0;
         StringBuilder sb = new StringBuilder();
@@ -147,6 +170,10 @@ public class FrmProgramadoCarrito extends JFrame {
         TxtResumen.setText(sb.toString());
     }
 
+    /**
+     * calcula el total a pagar restando el descuento al subtotal
+     * y actualiza las etiquetas de la interfaz para que el cliente lo vea
+     */
     private void actualizarTotales() {
         total = subtotal - descuento;
         LblSubtotal.setText("Subtotal: $" + String.format("%.2f", subtotal));
@@ -154,6 +181,11 @@ public class FrmProgramadoCarrito extends JFrame {
         LblTotal.setText("Total: $" + String.format("%.2f", total));
     }
 
+    /**
+     * configura la logica de los botones de la ventana
+     * maneja la busqueda y aplicacion de cupones y la creacion final
+     * de los pedidos tanto express como programados en la base de datos
+     */
     private void agregarEventos() {
 
         BtnAplicarCupon.addActionListener(e -> {
@@ -164,7 +196,8 @@ public class FrmProgramadoCarrito extends JFrame {
                 CuponDTO cuponReal = cuponBO.obtenerCuponPorNombre(codigoCupon);
 
                 if (cuponBO.validarCupon(cuponReal.getIdCupon())) {
-                    descuento = subtotal * (cuponReal.getPorcentaje() / 100);
+                    // se divide entre 100.0 con decimal para evitar error de redondeo a cero en java
+                    descuento = subtotal * (cuponReal.getPorcentaje() / 100.0);
                     pedidoActual.setCodigoCupon(codigoCupon);
                     actualizarTotales();
                     JOptionPane.showMessageDialog(this, "Cupón aplicado con éxito");
@@ -193,7 +226,7 @@ public class FrmProgramadoCarrito extends JFrame {
                 ConexionBD conexion = new ConexionBD();
                 pedidoActual.setTotalPagar(total);
 
-                if (pedidoActual.getTipo().equals("EXPRESS")) {
+                if ("EXPRESS".equals(pedidoActual.getTipo())) {
                     IPedidoExpressBO pedidoExpressBO = new PedidoExpressBO(
                             new PedidoExpressDAO(conexion),
                             new PedidoDAO(conexion),
